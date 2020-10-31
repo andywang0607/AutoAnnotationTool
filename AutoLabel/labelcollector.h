@@ -6,6 +6,10 @@
 #include <QQuickPaintedItem>
 #include <QPainter>
 #include <QImage>
+#include <QVector>
+#include <QPointF>
+#include <QLineF>
+#include <QPen>
 
 // std related header
 #include <vector>
@@ -61,11 +65,34 @@ private:
 public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
+public slots:
+    void appendData(cv::Rect rect);
 
 signals:
 
     void imageChanged();
     void imgSrcChanged(QString imgSrc);
+
+    //mouse behavior
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+private:
+    bool m_mouseEnabled;
+    bool m_mousePressed;
+    bool m_mouseMoved;
+
+    QPointF m_lastPoint;
+    QPointF m_currentPoint;
+    QPointF m_firstPoint;
+
+    QPen m_penNormal;
+    QPen m_penHighlight;
+    QVector<QPen> m_penVec;
+
+private:
+    QVector<LabelData*> m_dataVec;
 };
 
 #endif // LABELCOLLECTOR_H

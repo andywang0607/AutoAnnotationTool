@@ -1,8 +1,16 @@
 #include "labelcollector.h"
+#include <QtGlobal>
 
 LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
+  , m_mouseEnabled(true)
+  , m_mousePressed(false)
+  , m_mouseMoved(false)
+  , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
-
+    setAcceptedMouseButtons(Qt::LeftButton);
+    m_penVec.push_back(m_penNormal);
+    m_penVec.push_back(m_penHighlight);
 }
 
 void LabelCollector::paint(QPainter *painter){
@@ -11,6 +19,17 @@ void LabelCollector::paint(QPainter *painter){
         qDebug() << Q_FUNC_INFO << " m_imageScaled height"<<m_imageScaled.height();
         QRect rect(m_imageScaled.rect());
         painter->drawImage(rect.topLeft(), m_imageScaled);
+    }
+    if(m_mouseMoved){
+      painter->setPen(m_penNormal);
+      painter->setRenderHint(QPainter::Antialiasing);
+      painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
+    }
+    if(m_dataVec.empty()) return;
+    for(auto const &rect : m_dataVec){
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(m_penVec.at(rect->penIdx));
+        painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
     }
 }
 
@@ -68,4 +87,68 @@ void LabelCollector::setImgSrc(QString imgSrc)
     }
     setImage(QImage(m_imgSrc));
     emit imgSrcChanged(m_imgSrc);
+}
+
+void LabelCollector::mousePressEvent(QMouseEvent *event)
+{
+    m_mouseMoved = false;
+    if(!(event->button() & acceptedMouseButtons()))
+    {
+        QQuickPaintedItem::mousePressEvent(event);
+    }
+    else
+    {
+        m_mousePressed = true;
+        m_firstPoint = event->localPos();
+        m_lastPoint = m_firstPoint;
+        m_currentPoint = m_firstPoint;
+        event->setAccepted(true);
+    }
+}
+
+void LabelCollector::mouseMoveEvent(QMouseEvent *event)
+{
+    if(!m_mouseEnabled || !m_mousePressed)
+    {
+        QQuickPaintedItem::mousePressEvent(event);
+    }
+    else
+    {
+        m_mouseMoved = true;
+        m_lastPoint = event->localPos();
+
+        qDebug() << Q_FUNC_INFO << "m_firstPoint"<< m_firstPoint;
+        qDebug() << Q_FUNC_INFO << "m_lastPoint"<< m_lastPoint;
+        update();
+    }
+}
+
+void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(!m_mouseEnabled || !(event->button() & acceptedMouseButtons()))
+    {
+        QQuickPaintedItem::mousePressEvent(event);
+    }
+    else
+    {
+        m_mousePressed = false;
+        m_mouseMoved = false;
+
+        if(m_firstPoint != m_lastPoint){
+            cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
+            cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
+            cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
+            qDebug() << "m_itemVec size: "<<m_dataVec.size();
+            appendData(tmpRect);
+        }
+
+        update();
+    }
+}
+
+void LabelCollector::appendData(cv::Rect rect)
+{
+    if(!(qAbs(rect.width)>2 && qAbs(rect.height)>2)) return;
+    LabelData *tmp = new LabelData(rect);
+    m_dataVec.push_back(tmp);
 }
