@@ -51,6 +51,10 @@ public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
     void paint(QPainter *painter);
 public:
+    Q_INVOKABLE void RemoveLabel(int idx);
+private:
+    bool GetExistLabel(QPointF pt);
+public:
     QImage image() const;
     QString imgSrc() const;
 
@@ -78,10 +82,12 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 private:
     bool m_mouseEnabled;
     bool m_mousePressed;
     bool m_mouseMoved;
+    bool m_isLabelSelect;
 
     QPointF m_lastPoint;
     QPointF m_currentPoint;
@@ -90,6 +96,7 @@ private:
     QPen m_penNormal;
     QPen m_penHighlight;
     QVector<QPen> m_penVec;
+    std::vector<int> m_selectLabelIdx;
 
 private:
     QVector<LabelData*> m_dataVec;

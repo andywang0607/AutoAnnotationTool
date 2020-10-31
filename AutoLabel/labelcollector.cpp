@@ -5,6 +5,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_mouseEnabled(true)
   , m_mousePressed(false)
   , m_mouseMoved(false)
+  , m_isLabelSelect(false)
   , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
@@ -21,9 +22,9 @@ void LabelCollector::paint(QPainter *painter){
         painter->drawImage(rect.topLeft(), m_imageScaled);
     }
     if(m_mouseMoved){
-      painter->setPen(m_penNormal);
-      painter->setRenderHint(QPainter::Antialiasing);
-      painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
+        painter->setPen(m_penNormal);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
     }
     if(m_dataVec.empty()) return;
     for(auto const &rect : m_dataVec){
@@ -31,6 +32,30 @@ void LabelCollector::paint(QPainter *painter){
         painter->setPen(m_penVec.at(rect->penIdx));
         painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
     }
+}
+
+void LabelCollector::RemoveLabel(int idx)
+{
+    delete m_dataVec.at(idx);
+    m_dataVec[idx] = nullptr;
+    m_dataVec.erase(m_dataVec.begin()+idx);
+    update();
+}
+
+bool LabelCollector::GetExistLabel(QPointF pt)
+{
+    bool res = false;
+    cv::Point tmp(pt.x(),pt.y());
+    m_selectLabelIdx.clear();
+    QVector<LabelData*>::iterator it;
+    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+        if((*it)->rect.contains(tmp)){
+            m_selectLabelIdx.push_back(std::distance(m_dataVec.begin(),it));
+            (*it)->isSelect = true;
+            res = true;
+        }
+    }
+    return res;
 }
 
 QImage LabelCollector::image() const
@@ -138,12 +163,25 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
             cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
             cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
             cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
-            qDebug() << "m_itemVec size: "<<m_dataVec.size();
+            qDebug() << "m_dataVec size: "<<m_dataVec.size();
             appendData(tmpRect);
         }
 
         update();
     }
+}
+
+void LabelCollector::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    qDebug() << Q_FUNC_INFO << " start";
+    m_isLabelSelect = GetExistLabel(event->localPos());
+    if(!m_isLabelSelect) return;
+    qDebug() << "m_dataVec size: "<<m_dataVec.size();
+    if(m_isLabelSelect){
+        RemoveLabel(m_selectLabelIdx.front());
+        m_selectLabelIdx.erase(m_selectLabelIdx.begin());
+    }
+    qDebug() << Q_FUNC_INFO << "finish";
 }
 
 void LabelCollector::appendData(cv::Rect rect)
