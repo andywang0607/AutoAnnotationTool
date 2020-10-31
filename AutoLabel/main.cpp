@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include <labelcollector.h>
+#include <labeldatamodel.h>
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qmlRegisterType<LabelCollector>("LabelCollector", 1, 0, "LabelCollector");
+    qmlRegisterType<LabelDataModel>("LabelDataModel", 1, 0, "LabelDataModel");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
