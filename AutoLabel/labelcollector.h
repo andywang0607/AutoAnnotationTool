@@ -61,6 +61,7 @@ public:
     QString imgSrc() const;
     QVector<LabelData*> dataVec() const;
     bool setItemAt(int index, LabelData *item);
+    qreal getFactorScaled() const;
 private:
     QImage m_image;
     QImage m_imageScaled;

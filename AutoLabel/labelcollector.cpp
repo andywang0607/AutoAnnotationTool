@@ -88,6 +88,11 @@ bool LabelCollector::setItemAt(int index, LabelData *item)
     return true;
 }
 
+qreal LabelCollector::getFactorScaled() const
+{
+    return factorScaled;
+}
+
 void LabelCollector::setImage(const QImage &image){
     if(image.isNull()){
         qDebug() << Q_FUNC_INFO << "image is Null";

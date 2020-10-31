@@ -6,6 +6,7 @@ import QtQuick.Window 2.14
 
 import LabelCollector 1.0
 import LabelDataModel 1.0
+import CVModule 1.0
 
 Window {
     visible: true
@@ -86,6 +87,14 @@ Window {
                             labelCollector.RemoveLabel(index)
                         }
                     }
+                    Button{
+                        Layout.preferredWidth: 60
+                        text: "Cropped"
+                        Layout.fillWidth: true
+                        onClicked: {
+                            cvModule.GetCroppedImg(index)
+                        }
+                    }
                 }
             }
         }
@@ -103,6 +112,10 @@ Window {
         LabelDataModel{
             id:labelDataModel
             item: labelCollector
+        }
+        CVModule{
+            id: cvModule
+            labelCollector: labelCollector
         }
     }
 }
