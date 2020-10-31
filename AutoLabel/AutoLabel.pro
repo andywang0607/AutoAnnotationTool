@@ -15,6 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         labelcollector.cpp \
+        labeldatamodel.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
@@ -31,8 +32,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    labelcollector.h
+    labelcollector.h \
+    labeldatamodel.h
 
 win32:INCLUDEPATH += $(THIRD_PARTY)/opencv/build/include
 
 win32:LIBS += $(THIRD_PARTY)/opencv/build/x64/vc15/lib/opencv_world349d.lib
+
+DISTFILES += \
+    labeldatamodel.qmodel

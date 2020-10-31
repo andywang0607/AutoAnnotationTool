@@ -31,14 +31,17 @@ void LabelCollector::paint(QPainter *painter){
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(m_penVec.at(rect->penIdx));
         painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
+        qDebug() << Q_FUNC_INFO << "label class:"<<rect->labelClass;
     }
 }
 
 void LabelCollector::RemoveLabel(int idx)
 {
+    emit preItemRemoved(idx);
     delete m_dataVec.at(idx);
     m_dataVec[idx] = nullptr;
     m_dataVec.erase(m_dataVec.begin()+idx);
+    emit postItemRemoved();
     update();
 }
 
@@ -66,6 +69,23 @@ QImage LabelCollector::image() const
 QString LabelCollector::imgSrc() const
 {
     return m_imgSrc;
+}
+
+QVector<LabelData *> LabelCollector::dataVec() const
+{
+    return m_dataVec;
+}
+
+bool LabelCollector::setItemAt(int index, LabelData *item)
+{
+    if (index < 0 || index >= m_dataVec.size())
+        return false;
+    LabelData *oldItem = m_dataVec.at(index);
+    if (item->labelClass == oldItem->labelClass
+            && item->isSelect == oldItem->isSelect)
+        return false;
+    m_dataVec[index] = item;
+    return true;
 }
 
 void LabelCollector::setImage(const QImage &image){
@@ -187,6 +207,8 @@ void LabelCollector::mouseDoubleClickEvent(QMouseEvent *event)
 void LabelCollector::appendData(cv::Rect rect)
 {
     if(!(qAbs(rect.width)>2 && qAbs(rect.height)>2)) return;
+    emit preItemAppended();
     LabelData *tmp = new LabelData(rect);
     m_dataVec.push_back(tmp);
+    emit postItemAppended();
 }

@@ -20,9 +20,10 @@
 struct LabelData{
 public:
     LabelData(const cv::Rect &m_rect):
-        rect(m_rect), penIdx(0), isSelect(false){}
+        labelClass(0), rect(m_rect), penIdx(0), isSelect(false){}
     LabelData(const LabelData &e)
     {
+        labelClass = e.labelClass;
         penIdx = e.penIdx;
         rect = e.rect;
         isSelect = e.isSelect;
@@ -33,6 +34,7 @@ public:
     ~LabelData()
     {
     }
+    int labelClass;
     int penIdx; //0: normal, 1:highlight
     bool isSelect;
     cv::Rect rect;
@@ -57,7 +59,8 @@ private:
 public:
     QImage image() const;
     QString imgSrc() const;
-
+    QVector<LabelData*> dataVec() const;
+    bool setItemAt(int index, LabelData *item);
 private:
     QImage m_image;
     QImage m_imageScaled;
@@ -77,6 +80,15 @@ signals:
     void imageChanged();
     void imgSrcChanged(QString imgSrc);
 
+    // Model related signal
+signals:
+  void preItemAppended();
+  void postItemAppended();
+
+  void preItemRemoved(int index);
+  void postItemRemoved();
+
+  void onModelChanged();
     //mouse behavior
 protected:
     void mousePressEvent(QMouseEvent *event) override;
