@@ -68,8 +68,8 @@ Window {
                     anchors.margins: 10
                     TextField {
                         id: classInput
-                        Layout.preferredWidth: 70
-                        placeholderText: qsTr("Label class")
+                        Layout.preferredWidth: 60
+                        placeholderText: qsTr("Class")
                         horizontalAlignment : TextInput.AlignHCenter
                         validator: IntValidator {bottom: 0; top: 100}
                         onEditingFinished:{
@@ -80,7 +80,7 @@ Window {
                     }
 
                     Button{
-                        Layout.preferredWidth: 60
+                        Layout.preferredWidth: 55
                         text: "Remove"
                         Layout.fillWidth: true
                         onClicked: {
@@ -88,11 +88,11 @@ Window {
                         }
                     }
                     Button{
-                        Layout.preferredWidth: 60
-                        text: "Cropped"
+                        Layout.preferredWidth: 75
+                        text: "Get Contour"
                         Layout.fillWidth: true
                         onClicked: {
-                            cvModule.GetCroppedImg(index)
+                            cvModule.GetContour(index)
                         }
                     }
                 }
@@ -104,7 +104,7 @@ Window {
             selectExisting: true
             selectFolder: false
             selectMultiple: false
-            nameFilters: ["*.png", "*.jpg", "*.bmp"]
+            nameFilters: ["*.jpg", "*.png", "*.bmp"]
             onAccepted: {
                 labelCollector.imgSrc = fileDialog.fileUrl
             }

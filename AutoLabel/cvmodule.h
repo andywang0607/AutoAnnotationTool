@@ -20,8 +20,9 @@ public:
 public:
 
     Q_INVOKABLE void GetCroppedImg(int labelIdx);
-
-
+    Q_INVOKABLE void GetContour(int labelIdx);
+private:
+    cv::Rect GetROIRect(int labelIdx);
 public slots:
     void setLabelCollector(LabelCollector * labelCollector);
     void GetOriginImg(QString imgSrc);

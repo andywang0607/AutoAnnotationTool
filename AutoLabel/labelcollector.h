@@ -27,7 +27,6 @@ public:
         penIdx = e.penIdx;
         rect = e.rect;
         isSelect = e.isSelect;
-        contours.assign(e.contours.begin(),e.contours.end());
         contoursPoly.assign(e.contoursPoly.begin(),e.contoursPoly.end());
         result.assign(e.result.begin(),e.result.end());
     }
@@ -38,9 +37,8 @@ public:
     int penIdx; //0: normal, 1:highlight
     bool isSelect;
     cv::Rect rect;
-    std::vector<std::vector<cv::Point>> contours;
-    std::vector<std::vector<cv::Point>> contoursPoly;
-    std::vector<cv::Point> result;
+    std::vector<cv::Point> contoursPoly;
+    std::vector<QPoint> result;
 };
 
 class LabelCollector : public QQuickPaintedItem
@@ -54,6 +52,8 @@ public:
     void paint(QPainter *painter);
 public:
     Q_INVOKABLE void RemoveLabel(int idx);
+public:
+    void SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly);
 private:
     bool GetExistLabel(QPointF pt);
 public:
@@ -108,6 +108,7 @@ private:
 
     QPen m_penNormal;
     QPen m_penHighlight;
+    QPen m_penPoint;
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
