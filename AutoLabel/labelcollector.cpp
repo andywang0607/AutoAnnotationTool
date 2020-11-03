@@ -8,12 +8,14 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_isLabelSelect(false)
   , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_penPoint(QPen(Qt::black, 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penPoint(QPen(Qt::darkYellow, 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penPoly(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
     setAcceptedMouseButtons(Qt::LeftButton);
     m_penVec.push_back(m_penNormal);
     m_penVec.push_back(m_penHighlight);
     m_penVec.push_back(m_penPoint);
+    m_penVec.push_back(m_penPoly);
 }
 
 void LabelCollector::paint(QPainter *painter){
@@ -30,15 +32,19 @@ void LabelCollector::paint(QPainter *painter){
     }
     if(m_dataVec.empty()) return;
     for(auto const &rect : m_dataVec){
+        // Draw bounding box
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(m_penVec.at(rect->penIdx));
         painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
         qDebug() << Q_FUNC_INFO << "label class:"<<rect->labelClass;
+        // Draw result polygon
+        painter->setPen(m_penVec.at(3));
+        painter->drawPolygon(rect->resultPoly);
 
+        // Draw result point
         painter->setPen(m_penVec.at(2));
         for(auto& point : rect->result){
             painter->drawPoint(point);
-            qDebug() << Q_FUNC_INFO << "draw point:"<<point;
         }
     }
 }
@@ -56,12 +62,16 @@ void LabelCollector::RemoveLabel(int idx)
 void LabelCollector::SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly)
 {
     qDebug()<< Q_FUNC_INFO << "start";
+    QPolygon tmpPoly;
     m_dataVec[labelIdx]->contoursPoly.assign(contoursPoly.begin(),contoursPoly.end());
     m_dataVec[labelIdx]->result.resize(m_dataVec[labelIdx]->contoursPoly.size());
     for(int i =0;i< m_dataVec[labelIdx]->contoursPoly.size();++i){
         cv::Point tmp = m_dataVec[labelIdx]->contoursPoly[i];
-        m_dataVec[labelIdx]->result[i] = QPoint(tmp.x*(1.0f/getFactorScaled()),tmp.y*(1.0f/getFactorScaled()));
+        QPoint resultPoint = QPoint(tmp.x*(1.0f/getFactorScaled()),tmp.y*(1.0f/getFactorScaled()));
+        m_dataVec[labelIdx]->result[i] = resultPoint;
+        tmpPoly.push_back(resultPoint);
     }
+    m_dataVec[labelIdx]->resultPoly = tmpPoly;
     update();
     qDebug()<< Q_FUNC_INFO << "end";
 }

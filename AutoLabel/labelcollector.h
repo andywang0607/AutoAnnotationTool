@@ -9,6 +9,7 @@
 #include <QVector>
 #include <QPointF>
 #include <QLineF>
+#include <QPolygon>
 #include <QPen>
 
 // std related header
@@ -29,6 +30,7 @@ public:
         isSelect = e.isSelect;
         contoursPoly.assign(e.contoursPoly.begin(),e.contoursPoly.end());
         result.assign(e.result.begin(),e.result.end());
+        resultPoly = QPolygon(e.resultPoly);
     }
     ~LabelData()
     {
@@ -38,7 +40,8 @@ public:
     bool isSelect;
     cv::Rect rect;
     std::vector<cv::Point> contoursPoly;
-    std::vector<QPoint> result;
+    std::vector<QPoint> result; // record scaled point show in GUI
+    QPolygon resultPoly;
 };
 
 class LabelCollector : public QQuickPaintedItem
@@ -112,6 +115,7 @@ private:
     QPen m_penNormal;
     QPen m_penHighlight;
     QPen m_penPoint;
+    QPen m_penPoly;
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
