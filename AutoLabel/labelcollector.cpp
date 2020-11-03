@@ -8,10 +8,12 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_isLabelSelect(false)
   , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penPoint(QPen(Qt::black, 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
     setAcceptedMouseButtons(Qt::LeftButton);
     m_penVec.push_back(m_penNormal);
     m_penVec.push_back(m_penHighlight);
+    m_penVec.push_back(m_penPoint);
 }
 
 void LabelCollector::paint(QPainter *painter){
@@ -32,6 +34,12 @@ void LabelCollector::paint(QPainter *painter){
         painter->setPen(m_penVec.at(rect->penIdx));
         painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
         qDebug() << Q_FUNC_INFO << "label class:"<<rect->labelClass;
+
+        painter->setPen(m_penVec.at(2));
+        for(auto& point : rect->result){
+            painter->drawPoint(point);
+            qDebug() << Q_FUNC_INFO << "draw point:"<<point;
+        }
     }
 }
 
@@ -44,6 +52,20 @@ void LabelCollector::RemoveLabel(int idx)
     emit postItemRemoved();
     update();
 }
+
+void LabelCollector::SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly)
+{
+    qDebug()<< Q_FUNC_INFO << "start";
+    m_dataVec[labelIdx]->contoursPoly.assign(contoursPoly.begin(),contoursPoly.end());
+    m_dataVec[labelIdx]->result.resize(m_dataVec[labelIdx]->contoursPoly.size());
+    for(int i =0;i< m_dataVec[labelIdx]->contoursPoly.size();++i){
+        cv::Point tmp = m_dataVec[labelIdx]->contoursPoly[i];
+        m_dataVec[labelIdx]->result[i] = QPoint(tmp.x*(1.0f/getFactorScaled()),tmp.y*(1.0f/getFactorScaled()));
+    }
+    update();
+    qDebug()<< Q_FUNC_INFO << "end";
+}
+
 
 bool LabelCollector::GetExistLabel(QPointF pt)
 {
@@ -59,6 +81,14 @@ bool LabelCollector::GetExistLabel(QPointF pt)
         }
     }
     return res;
+}
+
+void LabelCollector::RemoveAllLabel()
+{
+    int size = m_dataVec.size();
+    for(int i=0;i<size;++i){
+        RemoveLabel(0);
+    }
 }
 
 QImage LabelCollector::image() const
@@ -88,6 +118,11 @@ bool LabelCollector::setItemAt(int index, LabelData *item)
     return true;
 }
 
+qreal LabelCollector::getFactorScaled() const
+{
+    return factorScaled;
+}
+
 void LabelCollector::setImage(const QImage &image){
     if(image.isNull()){
         qDebug() << Q_FUNC_INFO << "image is Null";
@@ -114,6 +149,8 @@ void LabelCollector::setImage(const QImage &image){
     // Redraw the image
     update();
     emit imageChanged();
+    // Remove all label while iamge change
+    RemoveAllLabel();
 
 }
 
@@ -185,9 +222,11 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
             cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
             qDebug() << "m_dataVec size: "<<m_dataVec.size();
             appendData(tmpRect);
+            update();
+            emit processRequest(m_dataVec.size()-1);
         }
 
-        update();
+
     }
 }
 

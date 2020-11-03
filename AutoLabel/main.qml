@@ -6,6 +6,7 @@ import QtQuick.Window 2.14
 
 import LabelCollector 1.0
 import LabelDataModel 1.0
+import CVModule 1.0
 
 Window {
     visible: true
@@ -67,8 +68,8 @@ Window {
                     anchors.margins: 10
                     TextField {
                         id: classInput
-                        Layout.preferredWidth: 70
-                        placeholderText: qsTr("Label class")
+                        Layout.preferredWidth: 60
+                        placeholderText: qsTr("Class")
                         horizontalAlignment : TextInput.AlignHCenter
                         validator: IntValidator {bottom: 0; top: 100}
                         onEditingFinished:{
@@ -79,7 +80,7 @@ Window {
                     }
 
                     Button{
-                        Layout.preferredWidth: 60
+                        Layout.preferredWidth: 55
                         text: "Remove"
                         Layout.fillWidth: true
                         onClicked: {
@@ -95,7 +96,7 @@ Window {
             selectExisting: true
             selectFolder: false
             selectMultiple: false
-            nameFilters: ["*.png", "*.jpg", "*.bmp"]
+            nameFilters: ["*.jpg", "*.png", "*.bmp"]
             onAccepted: {
                 labelCollector.imgSrc = fileDialog.fileUrl
             }
@@ -103,6 +104,10 @@ Window {
         LabelDataModel{
             id:labelDataModel
             item: labelCollector
+        }
+        CVModule{
+            id: cvModule
+            labelCollector: labelCollector
         }
     }
 }
