@@ -90,4 +90,5 @@ void CVModule::setLabelCollector(LabelCollector *labelCollector)
     m_labelCollector = labelCollector;
     emit labelCollectorChanged(m_labelCollector);
     QObject::connect(m_labelCollector, &LabelCollector::imgSrcChanged, this, &CVModule::GetOriginImg);
+    QObject::connect(m_labelCollector, &LabelCollector::processRequest, this, &CVModule::GetContour);
 }

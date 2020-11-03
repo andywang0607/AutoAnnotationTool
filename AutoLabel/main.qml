@@ -87,14 +87,6 @@ Window {
                             labelCollector.RemoveLabel(index)
                         }
                     }
-                    Button{
-                        Layout.preferredWidth: 75
-                        text: "Get Contour"
-                        Layout.fillWidth: true
-                        onClicked: {
-                            cvModule.GetContour(index)
-                        }
-                    }
                 }
             }
         }

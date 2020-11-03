@@ -90,6 +90,8 @@ signals:
   void postItemRemoved();
 
   void onModelChanged();
+
+  void processRequest(int rectIdx);
     //mouse behavior
 protected:
     void mousePressEvent(QMouseEvent *event) override;

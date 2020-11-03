@@ -212,9 +212,11 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
             cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
             qDebug() << "m_dataVec size: "<<m_dataVec.size();
             appendData(tmpRect);
+            update();
+            emit processRequest(m_dataVec.size()-1);
         }
 
-        update();
+
     }
 }
 
