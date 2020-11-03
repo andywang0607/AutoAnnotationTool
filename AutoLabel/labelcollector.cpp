@@ -83,6 +83,14 @@ bool LabelCollector::GetExistLabel(QPointF pt)
     return res;
 }
 
+void LabelCollector::RemoveAllLabel()
+{
+    int size = m_dataVec.size();
+    for(int i=0;i<size;++i){
+        RemoveLabel(0);
+    }
+}
+
 QImage LabelCollector::image() const
 {
     return m_image;
@@ -141,6 +149,8 @@ void LabelCollector::setImage(const QImage &image){
     // Redraw the image
     update();
     emit imageChanged();
+    // Remove all label while iamge change
+    RemoveAllLabel();
 
 }
 

@@ -56,6 +56,7 @@ public:
     void SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly);
 private:
     bool GetExistLabel(QPointF pt);
+    void RemoveAllLabel();
 public:
     QImage image() const;
     QString imgSrc() const;
