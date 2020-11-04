@@ -60,6 +60,7 @@ public:
 private:
     bool GetExistLabel(QPointF pt);
     void RemoveAllLabel();
+    double DistanceBetween2Point(QPointF p1, QPointF p2);
 public:
     QImage image() const;
     QString imgSrc() const;

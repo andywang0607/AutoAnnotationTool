@@ -101,6 +101,12 @@ void LabelCollector::RemoveAllLabel()
     }
 }
 
+double LabelCollector::DistanceBetween2Point(QPointF p1, QPointF p2)
+{
+    QPointF p12Vec = p2-p1;
+    return std::sqrt(std::pow(p12Vec.x(), 2) + std::pow(p12Vec.y(), 2));
+}
+
 QImage LabelCollector::image() const
 {
     return m_image;
