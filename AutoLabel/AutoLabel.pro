@@ -36,7 +36,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     cvmodule.h \
     labelcollector.h \
-    labeldatamodel.h
+    labeldata.h \
+    labeldatamodel.h \
+    mouseselectresult.h
 
 win32:INCLUDEPATH += $(THIRD_PARTY)/opencv/build/include
 

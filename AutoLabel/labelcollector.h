@@ -9,37 +9,14 @@
 #include <QVector>
 #include <QPointF>
 #include <QLineF>
+#include <QPolygon>
 #include <QPen>
 
 // std related header
 #include <vector>
 
-//OpenCV related header
-#include <opencv2/core/core.hpp>
-
-struct LabelData{
-public:
-    LabelData(const cv::Rect &m_rect):
-        labelClass(0), rect(m_rect), penIdx(0), isSelect(false){}
-    LabelData(const LabelData &e)
-    {
-        labelClass = e.labelClass;
-        penIdx = e.penIdx;
-        rect = e.rect;
-        isSelect = e.isSelect;
-        contoursPoly.assign(e.contoursPoly.begin(),e.contoursPoly.end());
-        result.assign(e.result.begin(),e.result.end());
-    }
-    ~LabelData()
-    {
-    }
-    int labelClass;
-    int penIdx; //0: normal, 1:highlight
-    bool isSelect;
-    cv::Rect rect;
-    std::vector<cv::Point> contoursPoly;
-    std::vector<QPoint> result;
-};
+#include "labeldata.h"
+#include "mouseselectresult.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
@@ -57,6 +34,7 @@ public:
 private:
     bool GetExistLabel(QPointF pt);
     void RemoveAllLabel();
+    double DistanceBetween2Point(QPointF p1, QPointF p2);
 public:
     QImage image() const;
     QString imgSrc() const;
@@ -112,11 +90,16 @@ private:
     QPen m_penNormal;
     QPen m_penHighlight;
     QPen m_penPoint;
+    QPen m_penPoly;
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
 private:
     QVector<LabelData*> m_dataVec;
+// mouse select related
+private:
+    void GetPolygonSelectResult(QPointF currentPos);
+    PolygonSelectResult polySelectResult;
 };
 
 #endif // LABELCOLLECTOR_H

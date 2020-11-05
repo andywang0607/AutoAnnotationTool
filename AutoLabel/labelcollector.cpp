@@ -1,6 +1,8 @@
 #include "labelcollector.h"
 #include <QtGlobal>
 
+static const int thresDistance = 3;
+
 LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_mouseEnabled(true)
   , m_mousePressed(false)
@@ -8,12 +10,14 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_isLabelSelect(false)
   , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_penPoint(QPen(Qt::black, 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penPoint(QPen(Qt::darkYellow, 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penPoly(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
     setAcceptedMouseButtons(Qt::LeftButton);
     m_penVec.push_back(m_penNormal);
     m_penVec.push_back(m_penHighlight);
     m_penVec.push_back(m_penPoint);
+    m_penVec.push_back(m_penPoly);
 }
 
 void LabelCollector::paint(QPainter *painter){
@@ -30,15 +34,19 @@ void LabelCollector::paint(QPainter *painter){
     }
     if(m_dataVec.empty()) return;
     for(auto const &rect : m_dataVec){
+        // Draw bounding box
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(m_penVec.at(rect->penIdx));
         painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
         qDebug() << Q_FUNC_INFO << "label class:"<<rect->labelClass;
+        // Draw result polygon
+        painter->setPen(m_penVec.at(3));
+        painter->drawPolygon(rect->resultPoly);
 
+        // Draw result point
         painter->setPen(m_penVec.at(2));
         for(auto& point : rect->result){
             painter->drawPoint(point);
-            qDebug() << Q_FUNC_INFO << "draw point:"<<point;
         }
     }
 }
@@ -56,12 +64,16 @@ void LabelCollector::RemoveLabel(int idx)
 void LabelCollector::SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly)
 {
     qDebug()<< Q_FUNC_INFO << "start";
+    QPolygon tmpPoly;
     m_dataVec[labelIdx]->contoursPoly.assign(contoursPoly.begin(),contoursPoly.end());
     m_dataVec[labelIdx]->result.resize(m_dataVec[labelIdx]->contoursPoly.size());
     for(int i =0;i< m_dataVec[labelIdx]->contoursPoly.size();++i){
         cv::Point tmp = m_dataVec[labelIdx]->contoursPoly[i];
-        m_dataVec[labelIdx]->result[i] = QPoint(tmp.x*(1.0f/getFactorScaled()),tmp.y*(1.0f/getFactorScaled()));
+        QPoint resultPoint = QPoint(tmp.x*(1.0f/getFactorScaled()),tmp.y*(1.0f/getFactorScaled()));
+        m_dataVec[labelIdx]->result[i] = resultPoint;
+        tmpPoly.push_back(resultPoint);
     }
+    m_dataVec[labelIdx]->resultPoly = tmpPoly;
     update();
     qDebug()<< Q_FUNC_INFO << "end";
 }
@@ -89,6 +101,12 @@ void LabelCollector::RemoveAllLabel()
     for(int i=0;i<size;++i){
         RemoveLabel(0);
     }
+}
+
+double LabelCollector::DistanceBetween2Point(QPointF p1, QPointF p2)
+{
+    QPointF p12Vec = p2-p1;
+    return std::sqrt(std::pow(p12Vec.x(), 2) + std::pow(p12Vec.y(), 2));
 }
 
 QImage LabelCollector::image() const
@@ -177,15 +195,15 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
     if(!(event->button() & acceptedMouseButtons()))
     {
         QQuickPaintedItem::mousePressEvent(event);
+        return;
     }
-    else
-    {
-        m_mousePressed = true;
-        m_firstPoint = event->localPos();
-        m_lastPoint = m_firstPoint;
-        m_currentPoint = m_firstPoint;
-        event->setAccepted(true);
-    }
+    m_mousePressed = true;
+    GetPolygonSelectResult(event->localPos());
+    m_firstPoint = event->localPos();
+    m_lastPoint = m_firstPoint;
+    m_currentPoint = m_firstPoint;
+    event->setAccepted(true);
+
 }
 
 void LabelCollector::mouseMoveEvent(QMouseEvent *event)
@@ -193,16 +211,20 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     if(!m_mouseEnabled || !m_mousePressed)
     {
         QQuickPaintedItem::mousePressEvent(event);
+        return;
+    }
+    if(polySelectResult.isSelect){
+        m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, event->localPos().toPoint());
+        m_dataVec.at(polySelectResult.boxIdx)->result.at(polySelectResult.polyIdx) = event->localPos().toPoint();
     }
     else
     {
         m_mouseMoved = true;
         m_lastPoint = event->localPos();
-
         qDebug() << Q_FUNC_INFO << "m_firstPoint"<< m_firstPoint;
         qDebug() << Q_FUNC_INFO << "m_lastPoint"<< m_lastPoint;
-        update();
     }
+    update();
 }
 
 void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
@@ -210,23 +232,19 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     if(!m_mouseEnabled || !(event->button() & acceptedMouseButtons()))
     {
         QQuickPaintedItem::mousePressEvent(event);
+        return;
     }
-    else
-    {
-        m_mousePressed = false;
-        m_mouseMoved = false;
-
-        if(m_firstPoint != m_lastPoint){
-            cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
-            cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
-            cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
-            qDebug() << "m_dataVec size: "<<m_dataVec.size();
-            appendData(tmpRect);
-            update();
-            emit processRequest(m_dataVec.size()-1);
-        }
-
-
+    m_mousePressed = false;
+    m_mouseMoved = false;
+    if(polySelectResult.isSelect) return;
+    if(m_firstPoint != m_lastPoint){
+        cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
+        cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
+        cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
+        qDebug() << "m_dataVec size: "<<m_dataVec.size();
+        appendData(tmpRect);
+        update();
+        emit processRequest(m_dataVec.size()-1);
     }
 }
 
@@ -240,6 +258,27 @@ void LabelCollector::mouseDoubleClickEvent(QMouseEvent *event)
         RemoveLabel(m_selectLabelIdx.front());
         m_selectLabelIdx.erase(m_selectLabelIdx.begin());
     }
+    qDebug() << Q_FUNC_INFO << "finish";
+}
+
+void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
+{
+    qDebug() << Q_FUNC_INFO << " start";
+    PolygonSelectResult res;
+    QVector<LabelData*>::iterator it;
+    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+        QPolygon checkedPoly = ((*it)->resultPoly);
+        QPolygon::iterator polyIter;
+        for(polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++){
+            if(DistanceBetween2Point(*polyIter,currentPos) < thresDistance){
+                polySelectResult.boxIdx = std::distance(m_dataVec.begin(), it);
+                polySelectResult.polyIdx = std::distance(checkedPoly.begin(), polyIter);
+                polySelectResult.isSelect = true;
+                return;
+            }
+        }
+    }
+    polySelectResult = res;
     qDebug() << Q_FUNC_INFO << "finish";
 }
 
