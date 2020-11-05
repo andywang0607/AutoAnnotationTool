@@ -37,7 +37,8 @@ HEADERS += \
     cvmodule.h \
     labelcollector.h \
     labeldata.h \
-    labeldatamodel.h
+    labeldatamodel.h \
+    mouseselectresult.h
 
 win32:INCLUDEPATH += $(THIRD_PARTY)/opencv/build/include
 

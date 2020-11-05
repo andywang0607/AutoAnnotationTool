@@ -1,6 +1,8 @@
 #include "labelcollector.h"
 #include <QtGlobal>
 
+static const int thresDistance = 3;
+
 LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_mouseEnabled(true)
   , m_mousePressed(false)
@@ -193,15 +195,15 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
     if(!(event->button() & acceptedMouseButtons()))
     {
         QQuickPaintedItem::mousePressEvent(event);
+        return;
     }
-    else
-    {
-        m_mousePressed = true;
-        m_firstPoint = event->localPos();
-        m_lastPoint = m_firstPoint;
-        m_currentPoint = m_firstPoint;
-        event->setAccepted(true);
-    }
+    m_mousePressed = true;
+    GetPolygonSelectResult(event->localPos());
+    m_firstPoint = event->localPos();
+    m_lastPoint = m_firstPoint;
+    m_currentPoint = m_firstPoint;
+    event->setAccepted(true);
+
 }
 
 void LabelCollector::mouseMoveEvent(QMouseEvent *event)
@@ -209,16 +211,20 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     if(!m_mouseEnabled || !m_mousePressed)
     {
         QQuickPaintedItem::mousePressEvent(event);
+        return;
+    }
+    if(polySelectResult.isSelect){
+        m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, event->localPos().toPoint());
+        m_dataVec.at(polySelectResult.boxIdx)->result.at(polySelectResult.polyIdx) = event->localPos().toPoint();
     }
     else
     {
         m_mouseMoved = true;
         m_lastPoint = event->localPos();
-
         qDebug() << Q_FUNC_INFO << "m_firstPoint"<< m_firstPoint;
         qDebug() << Q_FUNC_INFO << "m_lastPoint"<< m_lastPoint;
-        update();
     }
+    update();
 }
 
 void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
@@ -226,23 +232,19 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     if(!m_mouseEnabled || !(event->button() & acceptedMouseButtons()))
     {
         QQuickPaintedItem::mousePressEvent(event);
+        return;
     }
-    else
-    {
-        m_mousePressed = false;
-        m_mouseMoved = false;
-
-        if(m_firstPoint != m_lastPoint){
-            cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
-            cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
-            cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
-            qDebug() << "m_dataVec size: "<<m_dataVec.size();
-            appendData(tmpRect);
-            update();
-            emit processRequest(m_dataVec.size()-1);
-        }
-
-
+    m_mousePressed = false;
+    m_mouseMoved = false;
+    if(polySelectResult.isSelect) return;
+    if(m_firstPoint != m_lastPoint){
+        cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
+        cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
+        cv::Rect  tmpRect(cv::Rect(point_lt,point_rb));
+        qDebug() << "m_dataVec size: "<<m_dataVec.size();
+        appendData(tmpRect);
+        update();
+        emit processRequest(m_dataVec.size()-1);
     }
 }
 
@@ -256,6 +258,27 @@ void LabelCollector::mouseDoubleClickEvent(QMouseEvent *event)
         RemoveLabel(m_selectLabelIdx.front());
         m_selectLabelIdx.erase(m_selectLabelIdx.begin());
     }
+    qDebug() << Q_FUNC_INFO << "finish";
+}
+
+void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
+{
+    qDebug() << Q_FUNC_INFO << " start";
+    PolygonSelectResult res;
+    QVector<LabelData*>::iterator it;
+    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+        QPolygon checkedPoly = ((*it)->resultPoly);
+        QPolygon::iterator polyIter;
+        for(polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++){
+            if(DistanceBetween2Point(*polyIter,currentPos) < thresDistance){
+                polySelectResult.boxIdx = std::distance(m_dataVec.begin(), it);
+                polySelectResult.polyIdx = std::distance(checkedPoly.begin(), polyIter);
+                polySelectResult.isSelect = true;
+                return;
+            }
+        }
+    }
+    polySelectResult = res;
     qDebug() << Q_FUNC_INFO << "finish";
 }
 

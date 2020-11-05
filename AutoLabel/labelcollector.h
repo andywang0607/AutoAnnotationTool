@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "labeldata.h"
-
+#include "mouseselectresult.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
@@ -96,6 +96,10 @@ private:
 
 private:
     QVector<LabelData*> m_dataVec;
+// mouse select related
+private:
+    void GetPolygonSelectResult(QPointF currentPos);
+    PolygonSelectResult polySelectResult;
 };
 
 #endif // LABELCOLLECTOR_H
