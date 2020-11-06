@@ -10,7 +10,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_isLabelSelect(false)
   , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_penPoint(QPen(Qt::darkYellow, 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_penPoint(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoly(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -33,20 +33,38 @@ void LabelCollector::paint(QPainter *painter){
         painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
     }
     if(m_dataVec.empty()) return;
-    for(auto const &rect : m_dataVec){
+    QVector<LabelData*>::iterator iter;
+    for(iter=m_dataVec.begin();iter!=m_dataVec.end();iter++){
         // Draw bounding box
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->setPen(m_penVec.at(rect->penIdx));
-        painter->drawRect(QRectF(QPointF(rect->rect.tl().x,rect->rect.tl().y),QPointF(rect->rect.br().x,rect->rect.br().y)));
-        qDebug() << Q_FUNC_INFO << "label class:"<<rect->labelClass;
+        painter->setPen(m_penVec.at((*iter)->penIdx));
+        painter->drawRect(QRectF(QPointF((*iter)->rect.tl().x,(*iter)->rect.tl().y),QPointF((*iter)->rect.br().x,(*iter)->rect.br().y)));
+        qDebug() << Q_FUNC_INFO << "label class:"<<(*iter)->labelClass;
         // Draw result polygon
         painter->setPen(m_penVec.at(3));
-        painter->drawPolygon(rect->resultPoly);
+        painter->drawPolygon((*iter)->resultPoly);
 
         // Draw result point
         painter->setPen(m_penVec.at(2));
-        for(auto& point : rect->result){
-            painter->drawPoint(point);
+        std::vector<QPoint>::iterator pointIter;
+        int dataIdx = std::distance(m_dataVec.begin(),iter);
+        for(pointIter=(*iter)->result.begin();pointIter!=(*iter)->result.end();pointIter++){
+            int pointIdx = std::distance((*iter)->result.begin(),pointIter);
+            if(dataIdx == polySelectResult.boxIdx && pointIdx == polySelectResult.polyIdx){
+                QRadialGradient gradient(*pointIter,5,*pointIter);
+                gradient.setColorAt(0,QColor(220,118,51));
+                gradient.setColorAt(0.5,QColor(229,152,102));
+                gradient.setColorAt(1,QColor(237,187,153));
+                painter->setPen(QColor(237,187,153));
+                painter->setBrush(QBrush(gradient));
+                painter->drawEllipse(*pointIter,5,5);
+                qDebug() << Q_FUNC_INFO << " set brush QRadialGradient";
+            }
+            else{
+                painter->setPen(m_penVec.at(2));
+                painter->setBrush(QBrush(Qt::NoBrush));
+            }
+            painter->drawPoint(*pointIter);
         }
     }
 }
