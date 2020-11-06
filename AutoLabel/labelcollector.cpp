@@ -58,7 +58,6 @@ void LabelCollector::paint(QPainter *painter){
                 painter->setPen(QColor(237,187,153));
                 painter->setBrush(QBrush(gradient));
                 painter->drawEllipse(*pointIter,5,5);
-                qDebug() << Q_FUNC_INFO << " set brush QRadialGradient";
             }
             else{
                 painter->setPen(m_penVec.at(2));
@@ -254,7 +253,12 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     }
     m_mousePressed = false;
     m_mouseMoved = false;
-    if(polySelectResult.isSelect) return;
+    if(polySelectResult.isSelect){
+        PolygonSelectResult defaultResult;
+        polySelectResult = defaultResult;
+        update();
+        return;
+    }
     if(m_firstPoint != m_lastPoint){
         cv::Point point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
         cv::Point point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
