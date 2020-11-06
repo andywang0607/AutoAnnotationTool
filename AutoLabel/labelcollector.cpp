@@ -270,19 +270,6 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void LabelCollector::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    qDebug() << Q_FUNC_INFO << " start";
-    m_isLabelSelect = GetExistLabel(event->localPos());
-    if(!m_isLabelSelect) return;
-    qDebug() << "m_dataVec size: "<<m_dataVec.size();
-    if(m_isLabelSelect){
-        RemoveLabel(m_selectLabelIdx.front());
-        m_selectLabelIdx.erase(m_selectLabelIdx.begin());
-    }
-    qDebug() << Q_FUNC_INFO << "finish";
-}
-
 void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
 {
     qDebug() << Q_FUNC_INFO << " start";
