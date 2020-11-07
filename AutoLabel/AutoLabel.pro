@@ -44,5 +44,15 @@ win32:INCLUDEPATH += $(THIRD_PARTY)/opencv/build/include
 
 win32:LIBS += $(THIRD_PARTY)/opencv/build/x64/vc15/lib/opencv_world349d.lib
 
+
+unix::INCLUDEPATH += /usr/local/include/opencv \
+                     /usr/local/include/opencv2
+
+
+unix::LIBS += /usr/local/lib/libopencv_highgui.so \
+              /usr/local/lib/libopencv_core.so    \
+              /usr/local/lib/libopencv_imgproc.so \
+              /usr/local/lib/libopencv_imgcodecs.so
+
 DISTFILES += \
     labeldatamodel.qmodel
