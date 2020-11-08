@@ -41,7 +41,7 @@ bool LabelDataModel::setData(const QModelIndex &index, const QVariant &value, in
 
     switch (role) {
     case LabelClass:
-        m_item->dataVec().at(index.row())->labelClass = value.toInt();
+        m_item->dataVec().at(index.row())->labelClass = value.toString();
         break;
     case IsSelect:
         m_item->dataVec().at(index.row())->isSelect = value.toBool();

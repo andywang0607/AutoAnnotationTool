@@ -72,7 +72,6 @@ Window {
                         Layout.preferredWidth: 60
                         placeholderText: qsTr("Class")
                         horizontalAlignment : TextInput.AlignHCenter
-                        validator: IntValidator {bottom: 0; top: 100}
                         onEditingFinished:{
                             labelClass = text
                             classInput.cursorVisible = false
