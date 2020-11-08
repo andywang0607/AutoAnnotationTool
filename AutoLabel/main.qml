@@ -7,6 +7,7 @@ import QtQuick.Window 2.14
 import LabelCollector 1.0
 import LabelDataModel 1.0
 import CVModule 1.0
+import DataSaver 1.0
 
 Window {
     visible: true
@@ -107,6 +108,10 @@ Window {
         }
         CVModule{
             id: cvModule
+            labelCollector: labelCollector
+        }
+        DataSaver{
+            id: dataSaver
             labelCollector: labelCollector
         }
     }
