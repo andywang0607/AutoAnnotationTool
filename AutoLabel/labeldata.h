@@ -9,7 +9,7 @@
 struct LabelData{
 public:
     LabelData(const cv::Rect &m_rect):
-        labelClass(0), rect(m_rect), penIdx(0), isSelect(false){}
+        labelClass(""), rect(m_rect), penIdx(0), isSelect(false){}
     LabelData(const LabelData &e)
     {
         labelClass = e.labelClass;
@@ -23,7 +23,7 @@ public:
     ~LabelData()
     {
     }
-    int labelClass;
+    QString labelClass;
     int penIdx; //0: normal, 1:highlight
     bool isSelect;
     cv::Rect rect;

@@ -5,6 +5,7 @@
 #include <labelcollector.h>
 #include <labeldatamodel.h>
 #include <cvmodule.h>
+#include <datasaver.h>
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +16,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<LabelCollector>("LabelCollector", 1, 0, "LabelCollector");
     qmlRegisterType<LabelDataModel>("LabelDataModel", 1, 0, "LabelDataModel");
     qmlRegisterType<CVModule>("CVModule", 1, 0, "CVModule");
+    qmlRegisterType<DataSaver>("DataSaver", 1, 0, "DataSaver");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));

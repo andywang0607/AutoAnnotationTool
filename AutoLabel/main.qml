@@ -7,6 +7,7 @@ import QtQuick.Window 2.14
 import LabelCollector 1.0
 import LabelDataModel 1.0
 import CVModule 1.0
+import DataSaver 1.0
 
 Window {
     visible: true
@@ -30,6 +31,17 @@ Window {
         text: qsTr("Open File")
         onClicked: {
             fileDialog.open()
+        }
+    }
+    Button{
+        id:saveFileButton
+        anchors.top: openFileButton.bottom
+        anchors.left:parent.left
+        width:openFolderButton.width
+        height: openFolderButton.height
+        text: qsTr("Save File")
+        onClicked: {
+            dataSaver.SaveData(0)
         }
     }
     LabelCollector{
@@ -71,7 +83,6 @@ Window {
                         Layout.preferredWidth: 60
                         placeholderText: qsTr("Class")
                         horizontalAlignment : TextInput.AlignHCenter
-                        validator: IntValidator {bottom: 0; top: 100}
                         onEditingFinished:{
                             labelClass = text
                             classInput.cursorVisible = false
@@ -107,6 +118,10 @@ Window {
         }
         CVModule{
             id: cvModule
+            labelCollector: labelCollector
+        }
+        DataSaver{
+            id: dataSaver
             labelCollector: labelCollector
         }
     }

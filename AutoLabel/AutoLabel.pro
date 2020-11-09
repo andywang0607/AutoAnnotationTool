@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         cvmodule.cpp \
+        datasaver.cpp \
         labelcollector.cpp \
         labeldatamodel.cpp \
         main.cpp
@@ -35,6 +36,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     cvmodule.h \
+    datasaver.h \
     labelcollector.h \
     labeldata.h \
     labeldatamodel.h \
