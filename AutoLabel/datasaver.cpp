@@ -89,43 +89,46 @@ void DataSaver::SaveData(int mode)
     QJsonArray shape;
 
     // rectangle data
-    qreal factorScaled = labelCollector()->getFactorScaled();
-    for(int i =0 ;i<boxNum;++i){
-        QJsonObject rectInfo;
-        rectInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
-        rectInfo.insert("group_id",QJsonValue::Null);
-        rectInfo.insert("shape_type","rectangle");
-        rectInfo.insert("flags",QJsonObject());
-        QJsonArray ptArray;
-        QJsonArray tlArray;
-        tlArray.append(labelCollector()->dataVec().at(i)->rect.tl().x * factorScaled);
-        tlArray.append(labelCollector()->dataVec().at(i)->rect.tl().y * factorScaled);
-        QJsonArray brArray;
-        brArray.append(labelCollector()->dataVec().at(i)->rect.br().x * factorScaled);
-        brArray.append(labelCollector()->dataVec().at(i)->rect.br().y * factorScaled);
-        ptArray.append(tlArray);
-        ptArray.append(brArray);
-        rectInfo.insert("points",ptArray);
-        shape.append(rectInfo);
-    }
-
-    // polygon data
-    for(int i =0 ;i<boxNum;++i){
-        QJsonObject polyInfo;
-        polyInfo.insert("flags",QJsonObject());
-        polyInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
-        polyInfo.insert("group_id",QJsonValue::Null);
-        polyInfo.insert("shape_type","polygon");
-        QJsonArray ptArray;
-        int ptNum = labelCollector()->dataVec().at(i)->contoursPoly.size();
-        for(int j = 0; j<ptNum; ++j){
-            QJsonArray curPtArray;
-            curPtArray.append(labelCollector()->dataVec().at(i)->contoursPoly.at(j).x);
-            curPtArray.append(labelCollector()->dataVec().at(i)->contoursPoly.at(j).y);
-            ptArray.append(curPtArray);
+    if(mode == 0 || mode ==1){
+        qreal factorScaled = labelCollector()->getFactorScaled();
+        for(int i =0 ;i<boxNum;++i){
+            QJsonObject rectInfo;
+            rectInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
+            rectInfo.insert("group_id",QJsonValue::Null);
+            rectInfo.insert("shape_type","rectangle");
+            rectInfo.insert("flags",QJsonObject());
+            QJsonArray ptArray;
+            QJsonArray tlArray;
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.tl().x * factorScaled);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.tl().y * factorScaled);
+            QJsonArray brArray;
+            brArray.append(labelCollector()->dataVec().at(i)->rect.br().x * factorScaled);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.br().y * factorScaled);
+            ptArray.append(tlArray);
+            ptArray.append(brArray);
+            rectInfo.insert("points",ptArray);
+            shape.append(rectInfo);
         }
-        polyInfo.insert("points",ptArray);
-        shape.append(polyInfo);
+    }
+    // polygon data
+    if(mode == 0 || mode ==2){
+        for(int i =0 ;i<boxNum;++i){
+            QJsonObject polyInfo;
+            polyInfo.insert("flags",QJsonObject());
+            polyInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
+            polyInfo.insert("group_id",QJsonValue::Null);
+            polyInfo.insert("shape_type","polygon");
+            QJsonArray ptArray;
+            int ptNum = labelCollector()->dataVec().at(i)->contoursPoly.size();
+            for(int j = 0; j<ptNum; ++j){
+                QJsonArray curPtArray;
+                curPtArray.append(labelCollector()->dataVec().at(i)->contoursPoly.at(j).x);
+                curPtArray.append(labelCollector()->dataVec().at(i)->contoursPoly.at(j).y);
+                ptArray.append(curPtArray);
+            }
+            polyInfo.insert("points",ptArray);
+            shape.append(polyInfo);
+        }
     }
     RootObject.insert("shapes", shape);
 
