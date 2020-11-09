@@ -33,6 +33,17 @@ Window {
             fileDialog.open()
         }
     }
+    Button{
+        id:saveFileButton
+        anchors.top: openFileButton.bottom
+        anchors.left:parent.left
+        width:openFolderButton.width
+        height: openFolderButton.height
+        text: qsTr("Save File")
+        onClicked: {
+            dataSaver.SaveData(0)
+        }
+    }
     LabelCollector{
         id:labelCollector
         anchors.left: openFolderButton.right
