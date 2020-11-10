@@ -1,7 +1,7 @@
 #include "labelcollector.h"
 #include <QtGlobal>
 
-static const int thresDistance = 3;
+static const int thresDistance = 5;
 
 LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_mouseEnabled(true)
