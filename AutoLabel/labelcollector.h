@@ -53,7 +53,7 @@ public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
 public slots:
-    void appendData(cv::Rect rect);
+    void appendData(QRectF rect);
 
 signals:
 
@@ -98,7 +98,9 @@ private:
 // mouse select related
 private:
     void GetPolygonSelectResult(QPointF currentPos);
+    void GetRectCornerResult(QPointF currentPos);
     PolygonSelectResult polySelectResult;
+    RectCornerSelectResult rectCornerSelectResult;
 };
 
 #endif // LABELCOLLECTOR_H

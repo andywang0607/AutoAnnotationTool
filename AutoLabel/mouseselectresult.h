@@ -9,4 +9,12 @@ struct PolygonSelectResult{
     int polyIdx; // The index of polygon
 };
 
+struct RectCornerSelectResult{
+    RectCornerSelectResult():
+        isSelect(false),boxIdx(-1),corner(-1){}
+    bool isSelect;
+    int boxIdx; // index of bounding box
+    int corner; // 0:topLeft, 1:topRight, 2:bottomRight, 3:bottomLeft
+};
+
 #endif // MOUSESELECTRESULT_H
