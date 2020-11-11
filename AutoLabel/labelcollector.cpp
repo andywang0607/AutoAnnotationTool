@@ -13,11 +13,13 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_penPoint(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoly(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
 {
-    setAcceptedMouseButtons(Qt::LeftButton);
+    setAcceptedMouseButtons(Qt::AllButtons);
     m_penVec.push_back(m_penNormal);
     m_penVec.push_back(m_penHighlight);
     m_penVec.push_back(m_penPoint);
     m_penVec.push_back(m_penPoly);
+
+    menu.addAction(QStringLiteral("Get Polygon"),this, [=](){emit processRequest(m_selectLabelIdx.front());});
 }
 
 void LabelCollector::paint(QPainter *painter){
@@ -223,16 +225,21 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
-    m_mousePressed = true;
-    GetPolygonSelectResult(event->localPos());
-    GetRectCornerResult(event->localPos());
-    GetRectEdgeResult(event->localPos());
     GetExistLabel(event->localPos());
-    m_firstPoint = event->localPos();
-    m_lastPoint = m_firstPoint;
-    m_currentPoint = m_firstPoint;
-    event->setAccepted(true);
-
+    if(Qt::LeftButton == event->button()){
+        m_mousePressed = true;
+        GetPolygonSelectResult(event->localPos());
+        GetRectCornerResult(event->localPos());
+        GetRectEdgeResult(event->localPos());
+        m_firstPoint = event->localPos();
+        m_lastPoint = m_firstPoint;
+        m_currentPoint = m_firstPoint;
+        event->setAccepted(true);
+    }
+    if(Qt::RightButton == event->button()){
+        if(m_selectLabelIdx.empty()) return;
+        menu.exec(QCursor::pos());
+    }
 }
 
 void LabelCollector::mouseMoveEvent(QMouseEvent *event)
@@ -242,6 +249,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
+    if(Qt::RightButton == event->button()) return;
     m_lastPoint = event->localPos();
     if(polySelectResult.isSelect){
         m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
@@ -287,7 +295,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
         QPointF offset = m_lastPoint - m_currentPoint;
         m_currentPoint = m_lastPoint;
         for(auto const &idx : m_selectLabelIdx){
-          m_dataVec.at(idx)->rect.translate(offset);
+            m_dataVec.at(idx)->rect.translate(offset);
         }
     }
     else
@@ -307,6 +315,7 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
+    if(Qt::RightButton == event->button()) return;
     m_mousePressed = false;
     m_mouseMoved = false;
     if(polySelectResult.isSelect){
@@ -321,7 +330,6 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
         qDebug() << "m_dataVec size: "<<m_dataVec.size();
         appendData(QRectF(point_lt,point_rb));
         update();
-        emit processRequest(m_dataVec.size()-1);
     }
 }
 

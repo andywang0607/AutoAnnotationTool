@@ -11,6 +11,8 @@
 #include <QLineF>
 #include <QPolygon>
 #include <QPen>
+#include <QMenu>
+#include <QAction>
 
 // std related header
 #include <vector>
@@ -93,6 +95,7 @@ private:
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
+    QMenu menu;
 private:
     QVector<LabelData*> m_dataVec;
 // mouse select related
