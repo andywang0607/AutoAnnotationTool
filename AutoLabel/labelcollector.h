@@ -35,6 +35,7 @@ private:
     bool GetExistLabel(QPointF pt);
     void RemoveAllLabel();
     double DistanceBetween2Point(QPointF p1, QPointF p2);
+    double DistanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
 public:
     QImage image() const;
     QString imgSrc() const;
@@ -99,8 +100,10 @@ private:
 private:
     void GetPolygonSelectResult(QPointF currentPos);
     void GetRectCornerResult(QPointF currentPos);
+    void GetRectEdgeResult(QPointF currentPos);
     PolygonSelectResult polySelectResult;
     RectCornerSelectResult rectCornerSelectResult;
+    RectEdgeSelectResult rectEdgeSelectResult;
 };
 
 #endif // LABELCOLLECTOR_H

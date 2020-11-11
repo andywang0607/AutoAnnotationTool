@@ -17,4 +17,11 @@ struct RectCornerSelectResult{
     int corner; // 0:topLeft, 1:topRight, 2:bottomRight, 3:bottomLeft
 };
 
+struct RectEdgeSelectResult{
+    RectEdgeSelectResult():
+        isSelect(false),boxIdx(-1),line(-1){}
+    bool isSelect;
+    int boxIdx;
+    int line; //0: left, 1: top, 2: right, 3: bottom
+};
 #endif // MOUSESELECTRESULT_H
