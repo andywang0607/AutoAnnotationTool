@@ -8,7 +8,6 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_mouseEnabled(true)
   , m_mousePressed(false)
   , m_mouseMoved(false)
-  , m_isLabelSelect(false)
   , m_penNormal(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoint(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
@@ -28,10 +27,12 @@ void LabelCollector::paint(QPainter *painter){
         QRect rect(m_imageScaled.rect());
         painter->drawImage(rect.topLeft(), m_imageScaled);
     }
-    if(m_mouseMoved){
-        painter->setPen(m_penNormal);
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
+    if(m_selectLabelIdx.empty()){
+        if(m_mouseMoved){
+            painter->setPen(m_penNormal);
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
+        }
     }
     if(m_dataVec.empty()) return;
     QVector<LabelData*>::iterator iter;
@@ -226,6 +227,7 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
     GetPolygonSelectResult(event->localPos());
     GetRectCornerResult(event->localPos());
     GetRectEdgeResult(event->localPos());
+    GetExistLabel(event->localPos());
     m_firstPoint = event->localPos();
     m_lastPoint = m_firstPoint;
     m_currentPoint = m_firstPoint;
@@ -279,6 +281,13 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
             break;
         default:
             break;
+        }
+    }
+    else if(!m_selectLabelIdx.empty()){
+        QPointF offset = m_lastPoint - m_currentPoint;
+        m_currentPoint = m_lastPoint;
+        for(auto const &idx : m_selectLabelIdx){
+          m_dataVec.at(idx)->rect.translate(offset);
         }
     }
     else

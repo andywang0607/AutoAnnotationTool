@@ -81,7 +81,6 @@ private:
     bool m_mouseEnabled;
     bool m_mousePressed;
     bool m_mouseMoved;
-    bool m_isLabelSelect;
 
     QPointF m_lastPoint;
     QPointF m_currentPoint;
