@@ -100,6 +100,7 @@ private:
     QVector<LabelData*> m_dataVec;
 // mouse select related
 private:
+    void setCursorIcon();
     void GetPolygonSelectResult(QPointF currentPos);
     void GetRectCornerResult(QPointF currentPos);
     void GetRectEdgeResult(QPointF currentPos);

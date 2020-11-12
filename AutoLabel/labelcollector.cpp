@@ -234,6 +234,7 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
         m_firstPoint = event->localPos();
         m_lastPoint = m_firstPoint;
         m_currentPoint = m_firstPoint;
+        setCursorIcon();
         event->setAccepted(true);
     }
     if(Qt::RightButton == event->button()){
@@ -315,6 +316,7 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
+    setCursor(QCursor(Qt::ArrowCursor));
     if(Qt::RightButton == event->button()) return;
     m_mousePressed = false;
     m_mouseMoved = false;
@@ -330,6 +332,48 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
         qDebug() << "m_dataVec size: "<<m_dataVec.size();
         appendData(QRectF(point_lt,point_rb));
         update();
+    }
+}
+
+void LabelCollector::setCursorIcon()
+{
+    if(rectCornerSelectResult.isSelect){
+        switch (rectCornerSelectResult.corner){
+        case 0:
+            setCursor(QCursor(Qt::SizeFDiagCursor));
+            break;
+        case 1:
+            setCursor(QCursor(Qt::SizeBDiagCursor));
+            break;
+        case 2:
+            setCursor(QCursor(Qt::SizeFDiagCursor));
+            break;
+        case 3:
+            setCursor(QCursor(Qt::SizeBDiagCursor));
+            break;
+        }
+    }
+    else if(rectEdgeSelectResult.isSelect){
+        switch (rectEdgeSelectResult.line){
+        case 0:
+            setCursor(QCursor(Qt::SizeHorCursor));
+            break;
+        case 1:
+            setCursor(QCursor(Qt::SizeVerCursor));
+            break;
+        case 2:
+            setCursor(QCursor(Qt::SizeHorCursor));
+            break;
+        case 3:
+            setCursor(QCursor(Qt::SizeVerCursor));
+            break;
+        }
+    }
+    else if(!m_selectLabelIdx.empty()){
+        setCursor(QCursor(Qt::ClosedHandCursor));
+    }
+    else{
+        setCursor(QCursor(Qt::CrossCursor));
     }
 }
 
