@@ -1,5 +1,5 @@
 #include "cvmodule.h"
-#include "qtopencvconverter.h"
+#include "opencvtypeconverter.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -19,8 +19,7 @@ void CVModule::GetCroppedImg(int labelIdx)
 {
     QVector<LabelData*> dataVecTmp = labelCollector()->dataVec();
     qreal factorScaled = labelCollector()->getFactorScaled();
-    QtOpenCVConverter converter;
-    cv::Rect rectOri = converter.QRect2CVRect(QRectF(dataVecTmp.at(labelIdx)->rect.topLeft() * factorScaled,
+    cv::Rect rectOri = OpenCVTypeConverter::QRect2CVRect(QRectF(dataVecTmp.at(labelIdx)->rect.topLeft() * factorScaled,
                                                     dataVecTmp.at(labelIdx)->rect.bottomRight() * factorScaled));
     cv::Mat croppedImg = m_imgOri(rectOri);
     cv::namedWindow("Cropped");
@@ -74,10 +73,7 @@ cv::Rect CVModule::GetROIRect(int labelIdx)
     qreal factorScaled = labelCollector()->getFactorScaled();
     QRectF rectOri(dataVecTmp.at(labelIdx)->rect.topLeft() * factorScaled,
                                 dataVecTmp.at(labelIdx)->rect.bottomRight() * factorScaled);
-
-    QtOpenCVConverter converter;
-    converter.QRect2CVRect(rectOri);
-    return converter.QRect2CVRect(rectOri);
+    return OpenCVTypeConverter::QRect2CVRect(rectOri);
 }
 
 void CVModule::GetOriginImg(QString imgSrc)

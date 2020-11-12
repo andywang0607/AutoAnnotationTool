@@ -20,7 +20,7 @@ SOURCES += \
         labelcollector.cpp \
         labeldatamodel.cpp \
         main.cpp \
-        qtopencvconverter.cpp
+        opencvtypeconverter.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,7 +42,7 @@ HEADERS += \
     labeldata.h \
     labeldatamodel.h \
     mouseselectresult.h \
-    qtopencvconverter.h
+    opencvtypeconverter.h
 
 win32:INCLUDEPATH += $(THIRD_PARTY)/opencv/build/include
 
