@@ -11,6 +11,8 @@
 #include <QLineF>
 #include <QPolygon>
 #include <QPen>
+#include <QMenu>
+#include <QAction>
 
 // std related header
 #include <vector>
@@ -35,6 +37,7 @@ private:
     bool GetExistLabel(QPointF pt);
     void RemoveAllLabel();
     double DistanceBetween2Point(QPointF p1, QPointF p2);
+    double DistanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
 public:
     QImage image() const;
     QString imgSrc() const;
@@ -53,7 +56,7 @@ public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
 public slots:
-    void appendData(cv::Rect rect);
+    void appendData(QRectF rect);
 
 signals:
 
@@ -80,7 +83,6 @@ private:
     bool m_mouseEnabled;
     bool m_mousePressed;
     bool m_mouseMoved;
-    bool m_isLabelSelect;
 
     QPointF m_lastPoint;
     QPointF m_currentPoint;
@@ -93,12 +95,21 @@ private:
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
+    QMenu menu;
 private:
     QVector<LabelData*> m_dataVec;
 // mouse select related
 private:
+    void setCursorIcon();
+    bool RectBoundaryCheck(QRectF rect);
+    void PosBoundaryCheck(QPointF &pos);
+    void CheckRectValid();
     void GetPolygonSelectResult(QPointF currentPos);
+    void GetRectCornerResult(QPointF currentPos);
+    void GetRectEdgeResult(QPointF currentPos);
     PolygonSelectResult polySelectResult;
+    RectCornerSelectResult rectCornerSelectResult;
+    RectEdgeSelectResult rectEdgeSelectResult;
 };
 
 #endif // LABELCOLLECTOR_H

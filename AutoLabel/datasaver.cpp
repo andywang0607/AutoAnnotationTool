@@ -99,11 +99,11 @@ void DataSaver::SaveData(int mode)
             rectInfo.insert("flags",QJsonObject());
             QJsonArray ptArray;
             QJsonArray tlArray;
-            tlArray.append(labelCollector()->dataVec().at(i)->rect.tl().x * factorScaled);
-            tlArray.append(labelCollector()->dataVec().at(i)->rect.tl().y * factorScaled);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().x() * factorScaled);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().y() * factorScaled);
             QJsonArray brArray;
-            brArray.append(labelCollector()->dataVec().at(i)->rect.br().x * factorScaled);
-            brArray.append(labelCollector()->dataVec().at(i)->rect.br().y * factorScaled);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().x() * factorScaled);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().y() * factorScaled);
             ptArray.append(tlArray);
             ptArray.append(brArray);
             rectInfo.insert("points",ptArray);

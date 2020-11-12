@@ -8,7 +8,7 @@
 
 struct LabelData{
 public:
-    LabelData(const cv::Rect &m_rect):
+    LabelData(const QRectF &m_rect):
         labelClass(""), rect(m_rect), penIdx(0), isSelect(false){}
     LabelData(const LabelData &e)
     {
@@ -26,7 +26,7 @@ public:
     QString labelClass;
     int penIdx; //0: normal, 1:highlight
     bool isSelect;
-    cv::Rect rect;
+    QRectF rect;
     std::vector<cv::Point> contoursPoly;
     std::vector<QPoint> result; // record scaled point show in GUI
     QPolygon resultPoly;
