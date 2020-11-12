@@ -215,6 +215,7 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
+    if(m_imageScaled.isNull()) return;
     GetExistLabel(event->localPos());
     if(Qt::LeftButton == event->button()){
         m_mousePressed = true;
