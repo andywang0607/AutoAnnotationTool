@@ -24,8 +24,6 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
 void LabelCollector::paint(QPainter *painter){
     if(!this->m_imageScaled.isNull() ){
-        qDebug() << Q_FUNC_INFO << " m_imageScaled width"<<m_imageScaled.width();
-        qDebug() << Q_FUNC_INFO << " m_imageScaled height"<<m_imageScaled.height();
         QRect rect(m_imageScaled.rect());
         painter->drawImage(rect.topLeft(), m_imageScaled);
     }
@@ -43,7 +41,6 @@ void LabelCollector::paint(QPainter *painter){
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(m_penVec.at((*iter)->penIdx));
         painter->drawRect((*iter)->rect);
-        qDebug() << Q_FUNC_INFO << "label class:"<<(*iter)->labelClass;
         // Draw result polygon
         painter->setPen(m_penVec.at(3));
         painter->drawPolygon((*iter)->resultPoly);
@@ -178,20 +175,13 @@ void LabelCollector::setImage(const QImage &image){
     if(image.width() != this->width() && image.height() != this->height()){
         m_imageScaled = image.scaled(this->width(), this->height(), Qt::KeepAspectRatio);
         factorScaled = (float)image.width() / (float)m_imageScaled.width();
-        qDebug() << Q_FUNC_INFO << " m_image width"<<m_image.width();
-        qDebug() << Q_FUNC_INFO << " m_image height"<<m_image.height();
-        qDebug() << Q_FUNC_INFO << "image scaled";
-        qDebug() << Q_FUNC_INFO << " image width"<<image.width();
-        qDebug() << Q_FUNC_INFO << " image height"<<image.height();
     }
     else{
         factorScaled = 1;
         this->m_image = image;
-        qDebug() << Q_FUNC_INFO << "image not scaled";
     }
     imageWidth = m_imageScaled.width();
     imageHeight = m_imageScaled.height();
-    qDebug() << Q_FUNC_INFO << " factor_scaled"<<factorScaled;
     // Redraw the image
     update();
     emit imageChanged();
@@ -303,8 +293,6 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     {
         m_mouseMoved = true;
         m_lastPoint = event->localPos();
-        qDebug() << Q_FUNC_INFO << "m_firstPoint"<< m_firstPoint;
-        qDebug() << Q_FUNC_INFO << "m_lastPoint"<< m_lastPoint;
     }
     update();
 }
@@ -333,7 +321,6 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     if(m_firstPoint != m_lastPoint){
         QPoint point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
         QPoint point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
-        qDebug() << "m_dataVec size: "<<m_dataVec.size();
         appendData(QRectF(point_lt,point_rb));
         update();
     }
@@ -383,7 +370,6 @@ void LabelCollector::setCursorIcon()
 
 void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
 {
-    qDebug() << Q_FUNC_INFO << " start";
     PolygonSelectResult res;
     QVector<LabelData*>::iterator it;
     for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
@@ -400,12 +386,10 @@ void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
         }
     }
     polySelectResult = res;
-    qDebug() << Q_FUNC_INFO << "finish";
 }
 
 void LabelCollector::GetRectCornerResult(QPointF pt)
 {
-    qDebug() << Q_FUNC_INFO << " start";
     RectCornerSelectResult res;
     rectCornerSelectResult = res;
     QVector<LabelData*>::iterator it;
@@ -448,7 +432,6 @@ void LabelCollector::GetRectCornerResult(QPointF pt)
             return;
         }
     }
-    qDebug() << Q_FUNC_INFO << "finish";
 }
 
 void LabelCollector::GetRectEdgeResult(QPointF currentPos)
