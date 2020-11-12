@@ -326,6 +326,10 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
         update();
         return;
     }
+    if(polySelectResult.isSelect || rectEdgeSelectResult.isSelect || rectCornerSelectResult.isSelect)
+        return;
+    if(!m_selectLabelIdx.empty())
+        return;
     if(m_firstPoint != m_lastPoint){
         QPoint point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
         QPoint point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
