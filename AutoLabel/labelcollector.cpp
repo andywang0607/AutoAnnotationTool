@@ -242,6 +242,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     }
     if(Qt::RightButton == event->button()) return;
     m_lastPoint = event->localPos();
+    PosBoundaryCheck(m_lastPoint);
     if(polySelectResult.isSelect){
         m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
         m_dataVec.at(polySelectResult.boxIdx)->result.at(polySelectResult.polyIdx) = m_lastPoint.toPoint();
@@ -287,6 +288,8 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
         m_currentPoint = m_lastPoint;
         for(auto const &idx : m_selectLabelIdx){
             m_dataVec.at(idx)->rect.translate(offset);
+            if(!RectBoundaryCheck(m_dataVec.at(idx)->rect))
+                m_dataVec.at(idx)->rect.translate(-offset);
         }
     }
     else
@@ -308,6 +311,7 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     if(Qt::RightButton == event->button()) return;
     m_mousePressed = false;
     m_mouseMoved = false;
+    CheckRectValid();
     if(polySelectResult.isSelect){
         PolygonSelectResult defaultResult;
         polySelectResult = defaultResult;
@@ -365,6 +369,52 @@ void LabelCollector::setCursorIcon()
     }
     else{
         setCursor(QCursor(Qt::CrossCursor));
+    }
+}
+
+bool LabelCollector::RectBoundaryCheck(QRectF rect)
+{
+    if(rect.top() < 0) return false;
+    if(rect.right() > m_imageScaled.width()) return false;
+    if(rect.bottom() > m_imageScaled.height()) return false;
+    if(rect.left() < 0) return false;
+    return true;
+}
+
+void LabelCollector::PosBoundaryCheck(QPointF &pos)
+{
+    if(pos.x() < 0) pos.setX(0);
+    if(pos.x() > m_imageScaled.width()) pos.setX(m_imageScaled.width());
+    if(pos.y() > m_imageScaled.height()) pos.setY(m_imageScaled.height());
+    if(pos.y() < 0) pos.setY(0);
+}
+
+void LabelCollector::CheckRectValid()
+{
+    if(rectCornerSelectResult.isSelect){
+        QPointF topLeft;
+        QPointF bottomRight;
+        topLeft.setX(qMin(m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.left(),m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.right()));
+        topLeft.setY(qMin(m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.top(),m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.bottom()));
+
+        bottomRight.setX(qMax(m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.left(),m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.right()));
+        bottomRight.setY(qMax(m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.top(),m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.bottom()));
+
+        m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.setTopLeft(topLeft);
+        m_dataVec.at(rectCornerSelectResult.boxIdx)->rect.setBottomRight(bottomRight);
+    }
+    else if(rectEdgeSelectResult.isSelect){
+
+        QPointF topLeft;
+        QPointF bottomRight;
+        topLeft.setX(qMin(m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.left(),m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.right()));
+        topLeft.setY(qMin(m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.top(),m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.bottom()));
+
+        bottomRight.setX(qMax(m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.left(),m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.right()));
+        bottomRight.setY(qMax(m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.top(),m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.bottom()));
+
+        m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.setTopLeft(topLeft);
+        m_dataVec.at(rectEdgeSelectResult.boxIdx)->rect.setBottomRight(bottomRight);
     }
 }
 

@@ -101,6 +101,9 @@ private:
 // mouse select related
 private:
     void setCursorIcon();
+    bool RectBoundaryCheck(QRectF rect);
+    void PosBoundaryCheck(QPointF &pos);
+    void CheckRectValid();
     void GetPolygonSelectResult(QPointF currentPos);
     void GetRectCornerResult(QPointF currentPos);
     void GetRectEdgeResult(QPointF currentPos);
