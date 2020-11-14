@@ -47,8 +47,12 @@ HEADERS += \
 
 win32:INCLUDEPATH += $(THIRD_PARTY)/opencv/build/include
 
-win32:LIBS += $(THIRD_PARTY)/opencv/build/x64/vc15/lib/opencv_world349d.lib
-
+CONFIG(debug, debug|release) {
+    win32:LIBS += $(THIRD_PARTY)/opencv/build/x64/vc15/lib/opencv_world349d.lib
+}
+CONFIG(release, debug|release) {
+    win32:LIBS += $(THIRD_PARTY)/opencv/build/x64/vc15/lib/opencv_world349.lib
+}
 
 unix::INCLUDEPATH += /usr/local/include/opencv \
                      /usr/local/include/opencv2
