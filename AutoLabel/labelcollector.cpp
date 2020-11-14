@@ -326,7 +326,10 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
 
 void LabelCollector::setCursorIcon()
 {
-    if(rectCornerSelectResult.isSelect){
+    if(polySelectResult.isSelect){
+        setCursor(QCursor(Qt::ArrowCursor));
+    }
+    else if(rectCornerSelectResult.isSelect){
         switch (rectCornerSelectResult.corner){
         case 0:
             setCursor(QCursor(Qt::SizeFDiagCursor));
