@@ -12,6 +12,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoint(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoly(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , cvModule(std::make_unique<CVModule>())
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     m_penVec.push_back(m_penNormal);
@@ -19,7 +20,17 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
     m_penVec.push_back(m_penPoint);
     m_penVec.push_back(m_penPoly);
 
-    menu.addAction(QStringLiteral("Get Polygon"),this, [=](){emit processRequest(m_selectLabelIdx.front());});
+    connect(&watcher, &QFutureWatcher<void>::finished, this, [&](){
+        this->update();
+        setCursor(QCursor(Qt::ArrowCursor));
+    });
+
+    menu.addAction(QStringLiteral("Get Polygon"),this, [&](){
+        setCursor(QCursor(Qt::BusyCursor));
+        future = QtConcurrent::run(cvModule.get(), &CVModule::GetContour, m_dataVec, m_selectLabelIdx.front(), getFactorScaled());
+        watcher.setFuture(future);
+    });
+
 }
 
 void LabelCollector::paint(QPainter *painter){
@@ -78,24 +89,6 @@ void LabelCollector::RemoveLabel(int idx)
     emit postItemRemoved();
     update();
 }
-
-void LabelCollector::SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly)
-{
-    qDebug()<< Q_FUNC_INFO << "start";
-    QPolygon tmpPoly;
-    m_dataVec[labelIdx]->contoursPoly.assign(contoursPoly.begin(),contoursPoly.end());
-    m_dataVec[labelIdx]->result.resize(m_dataVec[labelIdx]->contoursPoly.size());
-    for(int i =0;i< m_dataVec[labelIdx]->contoursPoly.size();++i){
-        cv::Point tmp = m_dataVec[labelIdx]->contoursPoly[i];
-        QPoint resultPoint = QPoint(tmp.x*(1.0f/getFactorScaled()),tmp.y*(1.0f/getFactorScaled()));
-        m_dataVec[labelIdx]->result[i] = resultPoint;
-        tmpPoly.push_back(resultPoint);
-    }
-    m_dataVec[labelIdx]->resultPoly = tmpPoly;
-    update();
-    qDebug()<< Q_FUNC_INFO << "end";
-}
-
 
 bool LabelCollector::GetExistLabel(QPointF pt)
 {
@@ -205,6 +198,7 @@ void LabelCollector::setImgSrc(QString imgSrc)
     }
     setImage(QImage(m_imgSrc));
     emit imgSrcChanged(m_imgSrc);
+    cvModule->GetOriginImg(m_imgSrc);
 }
 
 void LabelCollector::mousePressEvent(QMouseEvent *event)

@@ -13,12 +13,15 @@
 #include <QPen>
 #include <QMenu>
 #include <QAction>
+#include <QtConcurrent>
 
 // std related header
 #include <vector>
+#include <memory>
 
 #include "labeldata.h"
 #include "mouseselectresult.h"
+#include "cv/cvmodule.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
@@ -31,8 +34,6 @@ public:
     void paint(QPainter *painter);
 public:
     Q_INVOKABLE void RemoveLabel(int idx);
-public:
-    void SetContours(int labelIdx, std::vector<cv::Point> &contoursPoly);
 private:
     bool GetExistLabel(QPointF pt);
     void RemoveAllLabel();
@@ -59,7 +60,6 @@ public slots:
     void appendData(QRectF rect);
 
 signals:
-
     void imageChanged();
     void imgSrcChanged(QString imgSrc);
 
@@ -73,7 +73,6 @@ signals:
 
   void onModelChanged();
 
-  void processRequest(int rectIdx);
     //mouse behavior
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -110,6 +109,10 @@ private:
     PolygonSelectResult polySelectResult;
     RectCornerSelectResult rectCornerSelectResult;
     RectEdgeSelectResult rectEdgeSelectResult;
+private:
+    std::unique_ptr<CVModule> cvModule;
+    QFuture<void> future;
+    QFutureWatcher<void> watcher;
 };
 
 #endif // LABELCOLLECTOR_H
