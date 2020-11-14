@@ -16,8 +16,6 @@ public:
         penIdx = e.penIdx;
         rect = e.rect;
         isSelect = e.isSelect;
-        contoursPoly.assign(e.contoursPoly.begin(),e.contoursPoly.end());
-        result.assign(e.result.begin(),e.result.end());
         resultPoly = QPolygon(e.resultPoly);
     }
     ~LabelData()
@@ -27,9 +25,7 @@ public:
     int penIdx; //0: normal, 1:highlight
     bool isSelect;
     QRectF rect;
-    std::vector<cv::Point> contoursPoly;
-    std::vector<QPoint> result; // record scaled point show in GUI
-    QPolygon resultPoly;
+    QPolygon resultPoly; // record scaled point show in GUI
 };
 
 #endif // LABELDATA_H

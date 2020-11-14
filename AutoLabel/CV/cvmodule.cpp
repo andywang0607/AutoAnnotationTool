@@ -67,12 +67,10 @@ void CVModule::GetContour(QVector<LabelData *> &dataVec, int labelIdx, qreal fac
 void CVModule::SetContours(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor){
     qDebug()<< Q_FUNC_INFO << "start";
     QPolygon tmpPoly;
-    dataVec[labelIdx]->contoursPoly.assign(contoursPoly.begin(),contoursPoly.end());
-    dataVec[labelIdx]->result.resize(dataVec[labelIdx]->contoursPoly.size());
-    for(int i =0;i< dataVec[labelIdx]->contoursPoly.size();++i){
-        cv::Point tmp = dataVec[labelIdx]->contoursPoly[i];
+
+    for(int i =0;i< contoursPoly.size();++i){
+        cv::Point tmp = contoursPoly[i];
         QPoint resultPoint = QPoint(tmp.x*(1.0f/factor),tmp.y*(1.0f/factor));
-        dataVec[labelIdx]->result[i] = resultPoint;
         tmpPoly.push_back(resultPoint);
     }
     dataVec[labelIdx]->resultPoly = tmpPoly;

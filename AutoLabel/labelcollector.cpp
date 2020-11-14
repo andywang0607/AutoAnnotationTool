@@ -58,10 +58,10 @@ void LabelCollector::paint(QPainter *painter){
 
         // Draw result point
         painter->setPen(m_penVec.at(2));
-        std::vector<QPoint>::iterator pointIter;
+        QVector<QPoint>::iterator pointIter;
         int dataIdx = std::distance(m_dataVec.begin(),iter);
-        for(pointIter=(*iter)->result.begin();pointIter!=(*iter)->result.end();pointIter++){
-            int pointIdx = std::distance((*iter)->result.begin(),pointIter);
+        for(pointIter=(*iter)->resultPoly.begin();pointIter!=(*iter)->resultPoly.end();pointIter++){
+            int pointIdx = std::distance((*iter)->resultPoly.begin(),pointIter);
             if(dataIdx == polySelectResult.boxIdx && pointIdx == polySelectResult.polyIdx){
                 QRadialGradient gradient(*pointIter,5,*pointIter);
                 gradient.setColorAt(0,QColor(220,118,51));
@@ -240,7 +240,6 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     PosBoundaryCheck(m_lastPoint);
     if(polySelectResult.isSelect){
         m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
-        m_dataVec.at(polySelectResult.boxIdx)->result.at(polySelectResult.polyIdx) = m_lastPoint.toPoint();
     }
     else if(!polySelectResult.isSelect && rectCornerSelectResult.isSelect){
         switch (rectCornerSelectResult.corner){

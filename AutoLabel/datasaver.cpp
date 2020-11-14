@@ -119,11 +119,11 @@ void DataSaver::SaveData(int mode)
             polyInfo.insert("group_id",QJsonValue::Null);
             polyInfo.insert("shape_type","polygon");
             QJsonArray ptArray;
-            int ptNum = labelCollector()->dataVec().at(i)->contoursPoly.size();
+            int ptNum = labelCollector()->dataVec().at(i)->resultPoly.size();
             for(int j = 0; j<ptNum; ++j){
                 QJsonArray curPtArray;
-                curPtArray.append(labelCollector()->dataVec().at(i)->contoursPoly.at(j).x);
-                curPtArray.append(labelCollector()->dataVec().at(i)->contoursPoly.at(j).y);
+                curPtArray.append(labelCollector()->dataVec().at(i)->resultPoly.at(j).x() * labelCollector()->getFactorScaled());
+                curPtArray.append(labelCollector()->dataVec().at(i)->resultPoly.at(j).y() * labelCollector()->getFactorScaled());
                 ptArray.append(curPtArray);
             }
             polyInfo.insert("points",ptArray);
