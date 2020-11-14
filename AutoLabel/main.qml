@@ -10,91 +10,142 @@ import DataSaver 1.0
 
 Window {
     visible: true
-    width: 890
-    height: 480
-    title: qsTr("Hello World")
-    Button{
-        id:openFolderButton
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width: 80
-        height: width
-        text: qsTr("Open Folder")
-    }
-    Button{
-        id:openFileButton
-        anchors.top: openFolderButton.bottom
-        anchors.left:parent.left
-        width:openFolderButton.width
-        height: openFolderButton.height
-        text: qsTr("Open File")
-        onClicked: {
-            fileDialog.open()
+    width: 850
+    height: 360
+    title: qsTr("Auto Label")
+    RowLayout{
+        anchors.fill: parent
+        ColumnLayout{
+            id: buttonCollumn
+            Layout.alignment: Qt.AlignLeft
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.preferredWidth: 80
+            Layout.maximumWidth: 80
+            Button{
+                id:openFolderButton
+                Layout.preferredWidth: 80
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Open Folder")
+                onClicked: {
+                    //ToDo
+                }
+            }
+            Button{
+                id:openFileButton
+                Layout.preferredWidth: 80
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Open File")
+                onClicked: {
+                    fileDialog.open()
+                }
+            }
+            Button{
+                id:saveFileButton
+                Layout.preferredWidth: 80
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Save File")
+                onClicked: {
+                    dataSaver.SaveData(0)
+                }
+            }
+            Button{
+                id:nextButton
+                Layout.preferredWidth: 80
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Next Image")
+                onClicked: {
+                    // ToDo
+                }
+            }
+            Button{
+                id:lastButton
+                Layout.preferredWidth: 80
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Last Image")
+                onClicked: {
+                    // ToDo
+                }
+            }
         }
-    }
-    Button{
-        id:saveFileButton
-        anchors.top: openFileButton.bottom
-        anchors.left:parent.left
-        width:openFolderButton.width
-        height: openFolderButton.height
-        text: qsTr("Save File")
-        onClicked: {
-            dataSaver.SaveData(0)
+        LabelCollector{
+            id:labelCollector
+            Layout.alignment: Qt.AlignLeft
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.preferredWidth: 500
+            onWidthChanged: {
+                labelCollector.setImage(labelCollector.image)
+            }
+            onHeightChanged: {
+                labelCollector.setImage(labelCollector.image)
+            }
         }
-    }
-    LabelCollector{
-        id:labelCollector
-        anchors.left: openFolderButton.right
-        anchors.top: parent.top
-        width: parent.width - openFolderButton.width - listRect.width
-        height: parent.height
-    }
-    Rectangle{
-        id: listRect
-        anchors.top: parent.top
-        anchors.right: parent.right
-        height: parent.height
-        width: 250
-        border.color: "black"
-        border.width: 3
-        ListView{
-            id:listView
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 3
-            width: parent.width
-            height: parent.height-6
-            model: labelDataModel
-            clip: true
-            delegate: Rectangle {
-                id: delegateRec
-                z:1
-                height: 90
+        Rectangle{
+            id: listRect
+            Layout.alignment: Qt.AlignRight
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.preferredWidth: 270
+            Layout.maximumWidth: 300
+            border.color: "dimgray"
+            border.width: 3
+            Label{
+                id: labelListTitle
+                anchors.top: parent.top
+                anchors.topMargin: 3
                 width: parent.width - 6
-                anchors.horizontalCenter: parent.horizontalCenter
-                border.color: "black"
-                RowLayout{
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    TextField {
-                        id: classInput
-                        Layout.preferredWidth: 60
-                        placeholderText: qsTr("Class")
-                        horizontalAlignment : TextInput.AlignHCenter
-                        onEditingFinished:{
-                            labelClass = text
-                            classInput.cursorVisible = false
-                            classInput.focus = false
-                        }
-                    }
+                height: 30
+                text: "Label List"
+                font.pixelSize: 18
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
 
-                    Button{
-                        Layout.preferredWidth: 55
-                        text: "Remove"
-                        Layout.fillWidth: true
-                        onClicked: {
-                            labelCollector.RemoveLabel(index)
+            ListView{
+                id:listView
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: labelListTitle.bottom
+                anchors.topMargin: 3
+                width: parent.width
+                height: parent.height-30-9
+                model: labelDataModel
+                clip: true
+                delegate: Rectangle {
+                    height: 50
+                    width: parent.width - 6
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    RowLayout{
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        TextField {
+                            id: classInput
+                            Layout.preferredWidth: 100
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            placeholderText: qsTr("Class")
+                            horizontalAlignment : TextInput.AlignHCenter
+                            onEditingFinished:{
+                                labelClass = text
+                                classInput.cursorVisible = false
+                                classInput.focus = false
+                            }
+                        }
+
+                        Button{
+                            Layout.preferredWidth: 50
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            text: "Remove"
+                            onClicked: {
+                                labelCollector.RemoveLabel(index)
+                            }
                         }
                     }
                 }
