@@ -22,9 +22,11 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     connect(&watcher, &QFutureWatcher<void>::finished, this, [&](){
         this->update();
+        setCursor(QCursor(Qt::ArrowCursor));
     });
 
     menu.addAction(QStringLiteral("Get Polygon"),this, [&](){
+        setCursor(QCursor(Qt::BusyCursor));
         future = QtConcurrent::run(cvModule.get(), &CVModule::GetContour, m_dataVec, m_selectLabelIdx.front(), getFactorScaled());
         watcher.setFuture(future);
     });
