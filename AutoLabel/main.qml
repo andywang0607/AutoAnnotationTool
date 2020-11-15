@@ -10,7 +10,7 @@ import DataSaver 1.0
 
 Window {
     visible: true
-    width: 850
+    width: 870
     height: 360
     title: qsTr("Auto Label")
     RowLayout{
@@ -20,11 +20,10 @@ Window {
             Layout.alignment: Qt.AlignLeft
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.preferredWidth: 80
-            Layout.maximumWidth: 80
+            Layout.preferredWidth: 120
+            Layout.maximumWidth: 120
             Button{
                 id:openFolderButton
-                Layout.preferredWidth: 80
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: qsTr("Open Folder")
@@ -34,7 +33,6 @@ Window {
             }
             Button{
                 id:openFileButton
-                Layout.preferredWidth: 80
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: qsTr("Open File")
@@ -44,7 +42,6 @@ Window {
             }
             Button{
                 id:saveFileButton
-                Layout.preferredWidth: 80
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: qsTr("Save File")
@@ -54,7 +51,6 @@ Window {
             }
             Button{
                 id:nextButton
-                Layout.preferredWidth: 80
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: qsTr("Next Image")
@@ -64,7 +60,6 @@ Window {
             }
             Button{
                 id:lastButton
-                Layout.preferredWidth: 80
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: qsTr("Last Image")
