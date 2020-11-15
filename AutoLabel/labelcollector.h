@@ -21,7 +21,7 @@
 
 #include "labeldata.h"
 #include "mouseselectresult.h"
-#include "cv/cvmodule.h"
+#include "CV/cvmodule.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
