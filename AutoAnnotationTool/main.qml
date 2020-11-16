@@ -23,15 +23,6 @@ Window {
             Layout.preferredWidth: 120
             Layout.maximumWidth: 120
             Button{
-                id:openFolderButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Open Folder")
-                onClicked: {
-                    folderDialog.open()
-                }
-            }
-            Button{
                 id:openFileButton
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -41,14 +32,14 @@ Window {
                 }
             }
             Button{
-                id:saveFileButton
+                id:openFolderButton
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                text: qsTr("Save File")
+                text: qsTr("Open Folder")
                 onClicked: {
-                    dataSaver.SaveData(0)
+                    folderDialog.open()
                 }
-            }
+            }      
             Button{
                 id:nextButton
                 Layout.fillHeight: true
@@ -65,6 +56,15 @@ Window {
                 text: qsTr("Last Image")
                 onClicked: {
                     labelCollector.fileIdx--
+                }
+            }
+            Button{
+                id:saveFileButton
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Save File")
+                onClicked: {
+                    dataSaver.SaveData(0)
                 }
             }
         }
