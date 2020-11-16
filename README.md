@@ -1,4 +1,4 @@
-# AutoLabel
+# AutoAnnotationTool
 A label tool enable to do image annotation for rectangle and generate polygon annotation automatically
  
 ## Environment
@@ -13,7 +13,7 @@ A label tool enable to do image annotation for rectangle and generate polygon an
 |OpenCV| 3.4.9|  
 
 ## Description
-AutoLabel is a graphical image annotation tool, 
+AutoAnnotationTool is a graphical image annotation tool, 
 it aim to reduce semantic segmentation label time.
 For now, the feature list below have been implement 
 and more function will be added continuously.
