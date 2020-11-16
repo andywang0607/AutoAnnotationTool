@@ -12,7 +12,7 @@ Window {
     visible: true
     width: 870
     height: 360
-    title: qsTr("Auto Label")
+    title: qsTr("Auto Annotation Tool")
     RowLayout{
         anchors.fill: parent
         ColumnLayout{
