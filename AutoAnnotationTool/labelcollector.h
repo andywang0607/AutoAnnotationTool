@@ -28,6 +28,7 @@ class LabelCollector : public QQuickPaintedItem
     Q_OBJECT
     Q_PROPERTY(QImage image READ image WRITE setImage NOTIFY imageChanged)
     Q_PROPERTY(QString imgSrc READ imgSrc WRITE setImgSrc NOTIFY imgSrcChanged)
+    Q_PROPERTY(int fileIdx READ fileIdx WRITE setFileIdx NOTIFY fileIdxChanged)
 
 public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
@@ -45,6 +46,8 @@ public:
     QVector<LabelData*> dataVec() const;
     bool setItemAt(int index, LabelData *item);
     qreal getFactorScaled() const;
+    int fileIdx() const;
+
 private:
     QImage m_image;
     QImage m_imageScaled;
@@ -52,12 +55,14 @@ private:
     int imageWidth;
     int imageHeight;
     QString m_imgSrc;
-
+    QFileInfoList fileInfoList;
 public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
 public slots:
     void appendData(QRectF rect);
+
+    void setFileIdx(int fileIdx);
 
 signals:
     void imageChanged();
@@ -65,13 +70,15 @@ signals:
 
     // Model related signal
 signals:
-  void preItemAppended();
-  void postItemAppended();
+    void preItemAppended();
+    void postItemAppended();
 
-  void preItemRemoved(int index);
-  void postItemRemoved();
+    void preItemRemoved(int index);
+    void postItemRemoved();
 
-  void onModelChanged();
+    void onModelChanged();
+
+    void fileIdxChanged(int fileIdx);
 
     //mouse behavior
 protected:
@@ -97,7 +104,7 @@ private:
     QMenu menu;
 private:
     QVector<LabelData*> m_dataVec;
-// mouse select related
+    // mouse select related
 private:
     void setCursorIcon();
     bool RectBoundaryCheck(QRectF rect);
@@ -113,6 +120,7 @@ private:
     std::unique_ptr<CVModule> cvModule;
     QFuture<void> future;
     QFutureWatcher<void> watcher;
+    int m_fileIdx;
 };
 
 #endif // LABELCOLLECTOR_H

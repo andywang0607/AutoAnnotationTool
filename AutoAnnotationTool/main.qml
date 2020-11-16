@@ -28,7 +28,7 @@ Window {
                 Layout.fillWidth: true
                 text: qsTr("Open Folder")
                 onClicked: {
-                    //ToDo
+                    folderDialog.open()
                 }
             }
             Button{
@@ -55,7 +55,7 @@ Window {
                 Layout.fillWidth: true
                 text: qsTr("Next Image")
                 onClicked: {
-                    // ToDo
+                    labelCollector.fileIdx++
                 }
             }
             Button{
@@ -64,7 +64,7 @@ Window {
                 Layout.fillWidth: true
                 text: qsTr("Last Image")
                 onClicked: {
-                    // ToDo
+                    labelCollector.fileIdx--
                 }
             }
         }
@@ -155,6 +155,16 @@ Window {
             nameFilters: ["*.jpg", "*.png", "*.bmp"]
             onAccepted: {
                 labelCollector.imgSrc = fileDialog.fileUrl
+            }
+        }
+        FileDialog {
+            id: folderDialog
+            title: "Choose a folder to label"
+            selectExisting: true
+            selectFolder: true
+            selectMultiple: false
+            onAccepted: {
+                labelCollector.imgSrc = folderDialog.fileUrl
             }
         }
         LabelDataModel{

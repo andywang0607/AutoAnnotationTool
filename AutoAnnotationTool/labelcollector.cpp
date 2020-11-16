@@ -159,6 +159,11 @@ qreal LabelCollector::getFactorScaled() const
     return factorScaled;
 }
 
+int LabelCollector::fileIdx() const
+{
+    return m_fileIdx;
+}
+
 void LabelCollector::setImage(const QImage &image){
     if(image.isNull()){
         qDebug() << Q_FUNC_INFO << "image is Null";
@@ -196,7 +201,19 @@ void LabelCollector::setImgSrc(QString imgSrc)
         m_imgSrc = m_imgSrc.remove(0,7);
 #endif
     }
-    setImage(QImage(m_imgSrc));
+    QFileInfo fi(m_imgSrc);
+    if(fi.isFile()){
+        setImage(QImage(m_imgSrc));
+    }
+    else {
+        QDir dir(m_imgSrc);
+        QStringList filters;
+        filters << "*.jpg" << "*.png" << "*.bmp";
+        dir.setNameFilters(filters);
+        fileInfoList = dir.entryInfoList(QDir::Files | QDir::Readable);
+        setFileIdx(0);
+        setImgSrc(fileInfoList.at(fileIdx()).absoluteFilePath());
+    }
     emit imgSrcChanged(m_imgSrc);
     cvModule->GetOriginImg(m_imgSrc);
 }
@@ -541,4 +558,15 @@ void LabelCollector::appendData(QRectF rect)
     LabelData *tmp = new LabelData(rect);
     m_dataVec.push_back(tmp);
     emit postItemAppended();
+}
+
+void LabelCollector::setFileIdx(int fileIdx)
+{
+    if (m_fileIdx == fileIdx)
+        return;
+    if(fileIdx < 0) return;
+    if(fileIdx >= fileInfoList.count()) return;
+    m_fileIdx = fileIdx;
+    emit fileIdxChanged(m_fileIdx);
+    setImgSrc(fileInfoList.at(m_fileIdx).absoluteFilePath());
 }
