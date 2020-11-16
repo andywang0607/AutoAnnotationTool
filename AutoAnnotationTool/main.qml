@@ -23,15 +23,6 @@ Window {
             Layout.preferredWidth: 120
             Layout.maximumWidth: 120
             Button{
-                id:openFolderButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Open Folder")
-                onClicked: {
-                    //ToDo
-                }
-            }
-            Button{
                 id:openFileButton
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -41,21 +32,21 @@ Window {
                 }
             }
             Button{
-                id:saveFileButton
+                id:openFolderButton
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                text: qsTr("Save File")
+                text: qsTr("Open Folder")
                 onClicked: {
-                    dataSaver.SaveData(0)
+                    folderDialog.open()
                 }
-            }
+            }      
             Button{
                 id:nextButton
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 text: qsTr("Next Image")
                 onClicked: {
-                    // ToDo
+                    labelCollector.fileIdx++
                 }
             }
             Button{
@@ -64,7 +55,16 @@ Window {
                 Layout.fillWidth: true
                 text: qsTr("Last Image")
                 onClicked: {
-                    // ToDo
+                    labelCollector.fileIdx--
+                }
+            }
+            Button{
+                id:saveFileButton
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Save File")
+                onClicked: {
+                    dataSaver.SaveData(0)
                 }
             }
         }
@@ -155,6 +155,16 @@ Window {
             nameFilters: ["*.jpg", "*.png", "*.bmp"]
             onAccepted: {
                 labelCollector.imgSrc = fileDialog.fileUrl
+            }
+        }
+        FileDialog {
+            id: folderDialog
+            title: "Choose a folder to label"
+            selectExisting: true
+            selectFolder: true
+            selectMultiple: false
+            onAccepted: {
+                labelCollector.imgSrc = folderDialog.fileUrl
             }
         }
         LabelDataModel{
