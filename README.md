@@ -28,9 +28,12 @@ and this project is inspired by https://github.com/wkentaro/labelme
 ![Execute](result/dog.gif)  
 - Save rectangle and polygon annotation data according to the [labelme](https://github.com/wkentaro/labelme) json format
 
+## Description to setting parameter
+- Iteration: Number of iterations the algorithm should run.(default = 4)
+- Epsilon: Input for OpenCV approxPolyDP () function (default = 1) [detail](https://www.programmersought.com/article/1309195733/)
+![Execute](result/setting.PNG)
 ## RoadMap
 - Load exist annotation from json file
-- Algorithm parameter setting window
 - Implement more image segmentation algorithm
 - CICD
   - I have no experience on CICD, if anyone is willing to help on this, it would be great help to me
