@@ -10,6 +10,7 @@ A label tool enable to do image annotation for rectangle and generate polygon an
 ### Third Party: 
 |Package|Version|
 |:--:|:--:|
+|Qt| 5.14.2|  
 |OpenCV| 3.4.9|  
 
 ## Description
