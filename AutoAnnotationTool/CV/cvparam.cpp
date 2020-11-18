@@ -28,7 +28,6 @@ void CVParam::setIteration(int iteration)
 
 void CVParam::setEpsilon(qreal epsilon)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_epsilon, epsilon))
         return;
 
