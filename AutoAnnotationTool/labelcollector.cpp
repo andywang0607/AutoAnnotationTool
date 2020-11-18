@@ -27,7 +27,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     menu.addAction(QStringLiteral("Get Polygon"),this, [&](){
         setCursor(QCursor(Qt::BusyCursor));
-        future = QtConcurrent::run(cvModule.get(), &CVModule::GetContour, m_dataVec, m_selectLabelIdx.front(), getFactorScaled());
+        future = QtConcurrent::run(cvModule.get(), &CVModule::GetContour, m_dataVec, m_selectLabelIdx.front(), getFactorScaled(), m_cvParam);
         watcher.setFuture(future);
     });
 
@@ -162,6 +162,11 @@ qreal LabelCollector::getFactorScaled() const
 int LabelCollector::fileIdx() const
 {
     return m_fileIdx;
+}
+
+CVParam *LabelCollector::cvParam() const
+{
+    return m_cvParam;
 }
 
 void LabelCollector::setImage(const QImage &image){
@@ -569,4 +574,13 @@ void LabelCollector::setFileIdx(int fileIdx)
     m_fileIdx = fileIdx;
     emit fileIdxChanged(m_fileIdx);
     setImgSrc(fileInfoList.at(m_fileIdx).absoluteFilePath());
+}
+
+void LabelCollector::setCvParam(CVParam *cvParam)
+{
+    if (m_cvParam == cvParam)
+        return;
+
+    m_cvParam = cvParam;
+    emit cvParamChanged(m_cvParam);
 }

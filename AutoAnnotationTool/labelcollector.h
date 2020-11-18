@@ -22,6 +22,7 @@
 #include "labeldata.h"
 #include "mouseselectresult.h"
 #include "CV/cvmodule.h"
+#include "CV/cvparam.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
@@ -29,6 +30,7 @@ class LabelCollector : public QQuickPaintedItem
     Q_PROPERTY(QImage image READ image WRITE setImage NOTIFY imageChanged)
     Q_PROPERTY(QString imgSrc READ imgSrc WRITE setImgSrc NOTIFY imgSrcChanged)
     Q_PROPERTY(int fileIdx READ fileIdx WRITE setFileIdx NOTIFY fileIdxChanged)
+    Q_PROPERTY(CVParam* cvParam READ cvParam WRITE setCvParam NOTIFY cvParamChanged)
 
 public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
@@ -48,6 +50,8 @@ public:
     qreal getFactorScaled() const;
     int fileIdx() const;
 
+    CVParam *cvParam() const;
+
 private:
     QImage m_image;
     QImage m_imageScaled;
@@ -63,6 +67,8 @@ public slots:
     void appendData(QRectF rect);
 
     void setFileIdx(int fileIdx);
+
+    void setCvParam(CVParam* cvParam);
 
 signals:
     void imageChanged();
@@ -81,6 +87,8 @@ signals:
     void fileIdxChanged(int fileIdx);
 
     //mouse behavior
+    void cvParamChanged(CVParam* cvParam);
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -121,6 +129,7 @@ private:
     QFuture<void> future;
     QFutureWatcher<void> watcher;
     int m_fileIdx;
+    CVParam* m_cvParam;
 };
 
 #endif // LABELCOLLECTOR_H
