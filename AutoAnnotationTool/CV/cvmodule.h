@@ -1,6 +1,7 @@
 #ifndef CVMODULE_H
 #define CVMODULE_H
 #include "labeldata.h"
+#include "CV/cvparam.h"
 
 #include <QRectF>
 #include <QString>
@@ -14,7 +15,7 @@ class CVModule
 public:
     CVModule();
     void GetCroppedImg(QRectF rect, qreal factor);
-    void GetContour(QVector<LabelData*> &dataVec, int labelIdx, qreal factor);
+    void GetContour(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CVParam *param);
     void GetOriginImg(QString imgSrc);
 private:
     cv::Rect GetROIRect(QRectF rect, qreal factor);

@@ -22,14 +22,14 @@ void CVModule::GetCroppedImg(QRectF rect, qreal factor)
     cv::imshow("Cropped", croppedImg);
 }
 
-void CVModule::GetContour(QVector<LabelData *> &dataVec, int labelIdx, qreal factor)
+void CVModule::GetContour(QVector<LabelData *> &dataVec, int labelIdx, qreal factor, CVParam *param)
 {
     qDebug()<< Q_FUNC_INFO << "start";
     if(m_imgOri.empty()) return;
 
     // grabcut
     cv::Mat grab, bg, fg;
-    cv::grabCut(m_imgOri, grab, GetROIRect(dataVec.at(labelIdx)->rect, factor), bg, fg, 5, cv::GC_INIT_WITH_RECT);
+    cv::grabCut(m_imgOri, grab, GetROIRect(dataVec.at(labelIdx)->rect, factor), bg, fg, param->iteration(), cv::GC_INIT_WITH_RECT);
 
     // equalizeHist
     equalizeHist(grab, grab);
@@ -59,7 +59,7 @@ void CVModule::GetContour(QVector<LabelData *> &dataVec, int labelIdx, qreal fac
         }
     }
     std::vector<std::vector<cv::Point>> contoursPoly(contours.size());
-    approxPolyDP(cv::Mat(contours[largestContourIndex]), contoursPoly[largestContourIndex], 1, true);
+    approxPolyDP(cv::Mat(contours[largestContourIndex]), contoursPoly[largestContourIndex], param->epsilon(), true);
     SetContours(dataVec, labelIdx, contoursPoly.at(largestContourIndex), factor);
     qDebug()<< Q_FUNC_INFO << "end";
 }

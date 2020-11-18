@@ -8,6 +8,8 @@ import LabelCollector 1.0
 import LabelDataModel 1.0
 import DataSaver 1.0
 
+import "Setting"
+
 Window {
     visible: true
     width: 870
@@ -67,6 +69,15 @@ Window {
                     dataSaver.SaveData(0)
                 }
             }
+            Button{
+                id:settingButton
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: qsTr("Setting")
+                onClicked: {
+                    settingWindow.show()
+                }
+            }
         }
         LabelCollector{
             id:labelCollector
@@ -74,6 +85,7 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: 500
+            cvParam: CVParam
             onWidthChanged: {
                 labelCollector.setImage(labelCollector.image)
             }
@@ -175,5 +187,8 @@ Window {
             id: dataSaver
             labelCollector: labelCollector
         }
+    }
+    SettingWindow{
+        id: settingWindow
     }
 }
