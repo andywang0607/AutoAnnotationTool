@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>Setting/SettingWindow.qml</file>
+        <file>Setting/CVParamSettingPage.qml</file>
     </qresource>
 </RCC>
