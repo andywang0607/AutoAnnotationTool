@@ -177,7 +177,8 @@ void LabelCollector::setImage(const QImage &image){
     m_image = image;
     if(image.width() != this->width() && image.height() != this->height()){
         m_imageScaled = image.scaled(this->width(), this->height(), Qt::KeepAspectRatio);
-        factorScaled = (float)image.width() / (float)m_imageScaled.width();
+        factorScaled = qMin((float)image.width() / (float)m_imageScaled.width(),
+             (float)image.height() / (float)m_imageScaled.height());
     }
     else{
         factorScaled = 1;
