@@ -15,7 +15,7 @@ A label tool enable to do image annotation for rectangle and generate polygon an
 
 ## Description
 AutoAnnotationTool is a graphical image annotation tool, 
-it aim to reduce semantic segmentation label time.
+I start this project for saving my time spent on semantic segmentation label.
 For now, the feature list below have been implement 
 and more function will be added continuously.
 It is written in c++ and Qt for its graphical interface,
@@ -23,9 +23,11 @@ and this project is inspired by https://github.com/wkentaro/labelme
 
 ## Feature
 - Rectangle annotation
-- Generate a polygon annotation automatically with rectangle ROI and enable to modify the generated polygon
+- Generate a polygon annotation with just one click on a rectangle ROI
 ![Execute](result/flower.gif)
+![Execute](result/dog2.gif) 
 ![Execute](result/dog.gif)  
+ 
 - Save rectangle and polygon annotation data according to the [labelme](https://github.com/wkentaro/labelme) json format
 
 ## Description to setting parameter
@@ -35,8 +37,8 @@ and this project is inspired by https://github.com/wkentaro/labelme
 ## RoadMap
 - Load exist annotation from json file
 - Implement more image segmentation algorithm
-- CICD
-  - I have no experience on CICD, if anyone is willing to help on this, it would be great help to me
+- CI
+  - I have no experience on CI, if anyone is willing to help on this, it would be great help to me
 
 ## How to contribute
 - I am open to any suggestions.
