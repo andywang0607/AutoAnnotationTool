@@ -1,19 +1,19 @@
-#ifndef DATASAVER_H
-#define DATASAVER_H
+#ifndef ANNOTATIONMANAGER_H
+#define ANNOTATIONMANAGER_H
 
 #include <QObject>
 #include <labelcollector.h>
-class DataSaver : public QObject
+class AnnotationManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(LabelCollector * labelCollector READ labelCollector WRITE setLabelCollector NOTIFY labelCollectorChanged)
 
 public:
-    explicit DataSaver(QObject *parent = nullptr);
+    explicit AnnotationManager(QObject *parent = nullptr);
     LabelCollector * labelCollector() const;
 public:
-    Q_INVOKABLE void SaveData(int mode); //0:all, 1:rectangle, 2:polygon
-    Q_INVOKABLE void LoadData(int mode); //0:all, 1:rectangle, 2:polygon
+    Q_INVOKABLE void SaveAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
+    Q_INVOKABLE void LoadAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
 private:
     QString GetSavingPath();
     QString GetImagePath();
@@ -33,4 +33,4 @@ private:
 
 };
 
-#endif // DATASAVER_H
+#endif // ANNOTATIONMANAGER_H

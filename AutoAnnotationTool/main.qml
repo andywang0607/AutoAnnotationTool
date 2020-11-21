@@ -6,7 +6,7 @@ import QtQuick.Window 2.14
 
 import LabelCollector 1.0
 import LabelDataModel 1.0
-import DataSaver 1.0
+import AnnotationManager 1.0
 
 import "Setting"
 
@@ -66,7 +66,7 @@ Window {
                 Layout.fillWidth: true
                 text: qsTr("Save File")
                 onClicked: {
-                    dataSaver.SaveData(0)
+                    dataSaver.SaveAnnotation(0)
                 }
             }
             Button{
@@ -93,7 +93,7 @@ Window {
                 labelCollector.setImage(labelCollector.image)
             }
             onImageChanged: {
-                dataSaver.LoadData(0)
+                dataSaver.LoadAnnotation(0)
             }
         }
         Rectangle{
@@ -186,7 +186,7 @@ Window {
             id:labelDataModel
             item: labelCollector
         }
-        DataSaver{
+        AnnotationManager{
             id: dataSaver
             labelCollector: labelCollector
         }
