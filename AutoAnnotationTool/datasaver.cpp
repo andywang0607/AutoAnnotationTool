@@ -171,7 +171,7 @@ void DataSaver::LoadData(int mode)
             labelCollector()->appendData(tmpRect, label);
         }
         else if(shapeType == "polygon"){
-            QPolygon tmpPoly;
+            QPolygonF tmpPoly;
             for (const auto& point : pointArray) {
                 QJsonArray pointArray = point.toArray();
                 QPointF polyPoint(pointArray[0].toDouble() / labelCollector()->getFactorScaled(),

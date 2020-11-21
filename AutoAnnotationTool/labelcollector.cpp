@@ -58,7 +58,7 @@ void LabelCollector::paint(QPainter *painter){
 
         // Draw result point
         painter->setPen(m_penVec.at(2));
-        QVector<QPoint>::iterator pointIter;
+        QVector<QPointF>::iterator pointIter;
         int dataIdx = std::distance(m_dataVec.begin(),iter);
         for(pointIter=(*iter)->poly.begin();pointIter!=(*iter)->poly.end();pointIter++){
             int pointIdx = std::distance((*iter)->poly.begin(),pointIter);
@@ -261,7 +261,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     m_lastPoint = event->localPos();
     PosBoundaryCheck(m_lastPoint);
     if(polySelectResult.isSelect){
-        m_dataVec.at(polySelectResult.boxIdx)->poly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
+        m_dataVec.at(polySelectResult.boxIdx)->poly[polySelectResult.polyIdx] = m_lastPoint;
     }
     else if(!polySelectResult.isSelect && rectCornerSelectResult.isSelect){
         switch (rectCornerSelectResult.corner){
@@ -442,8 +442,8 @@ void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
     PolygonSelectResult res;
     QVector<LabelData*>::iterator it;
     for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
-        QPolygon checkedPoly = ((*it)->poly);
-        QPolygon::iterator polyIter;
+        QPolygonF checkedPoly = ((*it)->poly);
+        QPolygonF::iterator polyIter;
         for(polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++){
             if(DistanceBetween2Point(*polyIter,currentPos) < thresDistance){
                 polySelectResult.boxIdx = std::distance(m_dataVec.begin(), it);
@@ -574,7 +574,7 @@ void LabelCollector::appendData(QRectF rect, QString labelClass)
     emit postItemAppended();
 }
 
-void LabelCollector::appendData(QPolygon poly, QString labelClass)
+void LabelCollector::appendData(QPolygonF poly, QString labelClass)
 {
     emit preItemAppended();
     LabelData *tmp = new LabelData(poly, labelClass);
@@ -582,7 +582,7 @@ void LabelCollector::appendData(QPolygon poly, QString labelClass)
     emit postItemAppended();
 }
 
-void LabelCollector::appendData(QRectF rect, QPolygon poly, QString labelClass)
+void LabelCollector::appendData(QRectF rect, QPolygonF poly, QString labelClass)
 {
     emit preItemAppended();
     LabelData *tmp = new LabelData(rect, poly, labelClass);
