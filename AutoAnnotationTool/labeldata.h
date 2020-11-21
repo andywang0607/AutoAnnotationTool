@@ -10,6 +10,12 @@ struct LabelData{
 public:
     LabelData(const QRectF &m_rect):
         labelClass(""), rect(m_rect), penIdx(0), isSelect(false){}
+    LabelData(const QRectF &m_rect, const QString m_labelClass):
+        labelClass(m_labelClass), rect(m_rect), penIdx(0), isSelect(false){}
+    LabelData(const QPolygon &m_poly, const QString m_labelClass):
+        labelClass(m_labelClass), resultPoly(m_poly), penIdx(0), isSelect(false){}
+    LabelData(const QRectF &m_rect, const QPolygon &m_poly, const QString m_labelClass):
+        labelClass(m_labelClass), rect(m_rect), resultPoly(m_poly), penIdx(0), isSelect(false){}
     LabelData(const LabelData &e)
     {
         labelClass = e.labelClass;

@@ -65,6 +65,9 @@ public slots:
     void setImgSrc(QString imgSrc);
 public slots:
     void appendData(QRectF rect);
+    void appendData(QRectF rect, QString labelClass);
+    void appendData(QPolygon poly, QString labelClass);
+    void appendData(QRectF rect, QPolygon poly, QString labelClass);
 
     void setFileIdx(int fileIdx);
 

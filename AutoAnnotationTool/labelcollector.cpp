@@ -188,10 +188,9 @@ void LabelCollector::setImage(const QImage &image){
     imageHeight = m_imageScaled.height();
     // Redraw the image
     update();
-    emit imageChanged();
     // Remove all label while iamge change
     RemoveAllLabel();
-
+    emit imageChanged();
 }
 
 void LabelCollector::setImgSrc(QString imgSrc)
@@ -562,6 +561,31 @@ void LabelCollector::appendData(QRectF rect)
     if(!(qAbs(rect.width())>2 && qAbs(rect.height())>2)) return;
     emit preItemAppended();
     LabelData *tmp = new LabelData(rect);
+    m_dataVec.push_back(tmp);
+    emit postItemAppended();
+}
+
+void LabelCollector::appendData(QRectF rect, QString labelClass)
+{
+    if(!(qAbs(rect.width())>2 && qAbs(rect.height())>2)) return;
+    emit preItemAppended();
+    LabelData *tmp = new LabelData(rect, labelClass);
+    m_dataVec.push_back(tmp);
+    emit postItemAppended();
+}
+
+void LabelCollector::appendData(QPolygon poly, QString labelClass)
+{
+    emit preItemAppended();
+    LabelData *tmp = new LabelData(poly, labelClass);
+    m_dataVec.push_back(tmp);
+    emit postItemAppended();
+}
+
+void LabelCollector::appendData(QRectF rect, QPolygon poly, QString labelClass)
+{
+    emit preItemAppended();
+    LabelData *tmp = new LabelData(rect, poly, labelClass);
     m_dataVec.push_back(tmp);
     emit postItemAppended();
 }
