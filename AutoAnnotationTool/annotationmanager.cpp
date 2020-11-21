@@ -6,19 +6,19 @@
 #include <QJsonArray>
 #include <QBuffer>
 
-#include "datasaver.h"
+#include "annotationmanager.h"
 
-DataSaver::DataSaver(QObject *parent) : QObject(parent)
+AnnotationManager::AnnotationManager(QObject *parent) : QObject(parent)
 {
 
 }
 
-LabelCollector *DataSaver::labelCollector() const
+LabelCollector *AnnotationManager::labelCollector() const
 {
     return m_labelCollector;
 }
 
-QString DataSaver::GetSavingPath()
+QString AnnotationManager::GetSavingPath()
 {
     QString imgSrc = labelCollector()->imgSrc();
     QFileInfo info(imgSrc);
@@ -27,13 +27,13 @@ QString DataSaver::GetSavingPath()
     return savingPath;
 }
 
-QString DataSaver::GetImagePath()
+QString AnnotationManager::GetImagePath()
 {
     QFileInfo info(labelCollector()->imgSrc());
     return info.fileName();
 }
 
-QString DataSaver::Base64Encode()
+QString AnnotationManager::Base64Encode()
 {
     QByteArray ba;
     QBuffer buf(&ba);
@@ -47,17 +47,17 @@ QString DataSaver::Base64Encode()
     return hexed;
 }
 
-int DataSaver::GetImageHeight()
+int AnnotationManager::GetImageHeight()
 {
     return labelCollector()->image().height();
 }
 
-int DataSaver::GetImageWidth()
+int AnnotationManager::GetImageWidth()
 {
     return labelCollector()->image().width();
 }
 
-void DataSaver::SaveData(int mode)
+void AnnotationManager::SaveAnnotation(int mode)
 {
     QString savingPath = GetSavingPath();
     QFile file(savingPath);
@@ -140,7 +140,7 @@ void DataSaver::SaveData(int mode)
     return;
 }
 
-void DataSaver::LoadData(int mode)
+void AnnotationManager::LoadAnnotation(int mode)
 {
     QFileInfo fi(GetSavingPath());
     if(!fi.exists()) return;
@@ -184,7 +184,7 @@ void DataSaver::LoadData(int mode)
     }
 }
 
-void DataSaver::setLabelCollector(LabelCollector *labelCollector)
+void AnnotationManager::setLabelCollector(LabelCollector *labelCollector)
 {
     if (m_labelCollector == labelCollector)
         return;

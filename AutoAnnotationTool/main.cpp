@@ -5,7 +5,7 @@
 
 #include <labelcollector.h>
 #include <labeldatamodel.h>
-#include <datasaver.h>
+#include <annotationmanager.h>
 #include <CV/cvparam.h>
 
 int main(int argc, char *argv[])
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<LabelCollector>("LabelCollector", 1, 0, "LabelCollector");
     qmlRegisterType<LabelDataModel>("LabelDataModel", 1, 0, "LabelDataModel");
-    qmlRegisterType<DataSaver>("DataSaver", 1, 0, "DataSaver");
+    qmlRegisterType<AnnotationManager>("AnnotationManager", 1, 0, "AnnotationManager");
 
     CVParam cvParam;
     QQmlApplicationEngine engine;
