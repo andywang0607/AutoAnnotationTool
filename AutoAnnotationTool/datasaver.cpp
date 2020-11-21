@@ -119,11 +119,11 @@ void DataSaver::SaveData(int mode)
             polyInfo.insert("group_id",QJsonValue::Null);
             polyInfo.insert("shape_type","polygon");
             QJsonArray ptArray;
-            int ptNum = labelCollector()->dataVec().at(i)->resultPoly.size();
+            int ptNum = labelCollector()->dataVec().at(i)->poly.size();
             for(int j = 0; j<ptNum; ++j){
                 QJsonArray curPtArray;
-                curPtArray.append(labelCollector()->dataVec().at(i)->resultPoly.at(j).x() * labelCollector()->getFactorScaled());
-                curPtArray.append(labelCollector()->dataVec().at(i)->resultPoly.at(j).y() * labelCollector()->getFactorScaled());
+                curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).x() * labelCollector()->getFactorScaled());
+                curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).y() * labelCollector()->getFactorScaled());
                 ptArray.append(curPtArray);
             }
             polyInfo.insert("points",ptArray);
@@ -178,7 +178,7 @@ void DataSaver::LoadData(int mode)
                         pointArray[1].toDouble() / labelCollector()->getFactorScaled());
                 tmpPoly.append(polyPoint.toPoint());
             }
-            labelName.contains(label) ? labelCollector()->dataVec().at(labelName.indexOf(label))->resultPoly.swap(tmpPoly) :
+            labelName.contains(label) ? labelCollector()->dataVec().at(labelName.indexOf(label))->poly.swap(tmpPoly) :
                                         labelCollector()->appendData(tmpPoly,label);
         }
     }

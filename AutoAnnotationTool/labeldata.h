@@ -13,16 +13,16 @@ public:
     LabelData(const QRectF &m_rect, const QString m_labelClass):
         labelClass(m_labelClass), rect(m_rect), penIdx(0), isSelect(false){}
     LabelData(const QPolygon &m_poly, const QString m_labelClass):
-        labelClass(m_labelClass), resultPoly(m_poly), penIdx(0), isSelect(false){}
+        labelClass(m_labelClass), poly(m_poly), penIdx(0), isSelect(false){}
     LabelData(const QRectF &m_rect, const QPolygon &m_poly, const QString m_labelClass):
-        labelClass(m_labelClass), rect(m_rect), resultPoly(m_poly), penIdx(0), isSelect(false){}
+        labelClass(m_labelClass), rect(m_rect), poly(m_poly), penIdx(0), isSelect(false){}
     LabelData(const LabelData &e)
     {
         labelClass = e.labelClass;
         penIdx = e.penIdx;
         rect = e.rect;
         isSelect = e.isSelect;
-        resultPoly = QPolygon(e.resultPoly);
+        poly = QPolygon(e.poly);
     }
     ~LabelData()
     {
@@ -31,7 +31,7 @@ public:
     int penIdx; //0: normal, 1:highlight
     bool isSelect;
     QRectF rect;
-    QPolygon resultPoly; // record scaled point show in GUI
+    QPolygon poly; // record scaled point show in GUI
 };
 
 #endif // LABELDATA_H

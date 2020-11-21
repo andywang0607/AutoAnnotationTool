@@ -54,14 +54,14 @@ void LabelCollector::paint(QPainter *painter){
         painter->drawRect((*iter)->rect);
         // Draw result polygon
         painter->setPen(m_penVec.at(3));
-        painter->drawPolygon((*iter)->resultPoly);
+        painter->drawPolygon((*iter)->poly);
 
         // Draw result point
         painter->setPen(m_penVec.at(2));
         QVector<QPoint>::iterator pointIter;
         int dataIdx = std::distance(m_dataVec.begin(),iter);
-        for(pointIter=(*iter)->resultPoly.begin();pointIter!=(*iter)->resultPoly.end();pointIter++){
-            int pointIdx = std::distance((*iter)->resultPoly.begin(),pointIter);
+        for(pointIter=(*iter)->poly.begin();pointIter!=(*iter)->poly.end();pointIter++){
+            int pointIdx = std::distance((*iter)->poly.begin(),pointIter);
             if(dataIdx == polySelectResult.boxIdx && pointIdx == polySelectResult.polyIdx){
                 QRadialGradient gradient(*pointIter,5,*pointIter);
                 gradient.setColorAt(0,QColor(220,118,51));
@@ -261,7 +261,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     m_lastPoint = event->localPos();
     PosBoundaryCheck(m_lastPoint);
     if(polySelectResult.isSelect){
-        m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
+        m_dataVec.at(polySelectResult.boxIdx)->poly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
     }
     else if(!polySelectResult.isSelect && rectCornerSelectResult.isSelect){
         switch (rectCornerSelectResult.corner){
@@ -442,7 +442,7 @@ void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
     PolygonSelectResult res;
     QVector<LabelData*>::iterator it;
     for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
-        QPolygon checkedPoly = ((*it)->resultPoly);
+        QPolygon checkedPoly = ((*it)->poly);
         QPolygon::iterator polyIter;
         for(polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++){
             if(DistanceBetween2Point(*polyIter,currentPos) < thresDistance){

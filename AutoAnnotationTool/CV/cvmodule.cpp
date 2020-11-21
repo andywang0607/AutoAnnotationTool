@@ -73,7 +73,7 @@ void CVModule::SetContours(QVector<LabelData*> &dataVec, int labelIdx, std::vect
         QPoint resultPoint = QPoint(tmp.x*(1.0f/factor),tmp.y*(1.0f/factor));
         tmpPoly.push_back(resultPoint);
     }
-    dataVec[labelIdx]->resultPoly = tmpPoly;
+    dataVec[labelIdx]->poly = tmpPoly;
     qDebug()<< Q_FUNC_INFO << "end";
 }
 
