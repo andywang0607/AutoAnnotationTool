@@ -140,6 +140,50 @@ void DataSaver::SaveData(int mode)
     return;
 }
 
+void DataSaver::LoadData(int mode)
+{
+    QFileInfo fi(GetSavingPath());
+    if(!fi.exists()) return;
+    QFile file(GetSavingPath());
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonParseError JsonParseError;
+    QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);
+    file.close();
+
+    QJsonObject rootObject = JsonDocument.object();
+    QJsonValueRef ref = rootObject.find("shapes").value();
+    QJsonObject m_addvalue = ref.toObject();
+    QJsonArray shapeAll = ref.toArray();
+
+    QStringList labelName;
+
+    for (const auto& element : shapeAll) {
+        QString label = element.toObject()["label"].toString();
+        if(!labelName.contains(label)) labelName.push_back(label);
+        QString shapeType = element.toObject()["shape_type"].toString();
+        QJsonArray pointArray = element.toObject()["points"].toArray();
+        if(shapeType == "rectangle"){
+            QPointF tl(pointArray[0].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
+                    pointArray[0].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
+            QPointF br(pointArray[1].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
+                    pointArray[1].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
+            QRectF tmpRect(tl, br);
+            labelCollector()->appendData(tmpRect, label);
+        }
+        else if(shapeType == "polygon"){
+            QPolygon tmpPoly;
+            for (const auto& point : pointArray) {
+                QJsonArray pointArray = point.toArray();
+                QPointF polyPoint(pointArray[0].toDouble() / labelCollector()->getFactorScaled(),
+                        pointArray[1].toDouble() / labelCollector()->getFactorScaled());
+                tmpPoly.append(polyPoint.toPoint());
+            }
+            labelName.contains(label) ? labelCollector()->dataVec().at(labelName.indexOf(label))->resultPoly.swap(tmpPoly) :
+                                        labelCollector()->appendData(tmpPoly,label);
+        }
+    }
+}
+
 void DataSaver::setLabelCollector(LabelCollector *labelCollector)
 {
     if (m_labelCollector == labelCollector)
