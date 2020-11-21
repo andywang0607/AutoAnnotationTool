@@ -23,7 +23,6 @@ QString AnnotationManager::GetSavingPath()
     QString imgSrc = labelCollector()->imgSrc();
     QFileInfo info(imgSrc);
     QString savingPath = info.path() + "/" + info.baseName() + ".json";
-    qDebug()<< Q_FUNC_INFO << "savingPath"<<savingPath;
     return savingPath;
 }
 
@@ -85,7 +84,6 @@ void AnnotationManager::SaveAnnotation(int mode)
 
     // Save bounding box data
     int boxNum = labelCollector()->dataVec().size();
-    qDebug()<< Q_FUNC_INFO << "boxNum"<<boxNum;
     QJsonArray shape;
 
     // rectangle data

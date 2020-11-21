@@ -171,7 +171,6 @@ CVParam *LabelCollector::cvParam() const
 
 void LabelCollector::setImage(const QImage &image){
     if(image.isNull()){
-        qDebug() << Q_FUNC_INFO << "image is Null";
         return;
     }
     m_image = image;
@@ -198,7 +197,6 @@ void LabelCollector::setImgSrc(QString imgSrc)
     if (m_imgSrc == imgSrc)
         return;
     m_imgSrc = imgSrc;
-    qDebug() << Q_FUNC_INFO << " m_imgSrc"<<m_imgSrc;
     if(m_imgSrc.left(4) == "file"){
 #ifdef _WIN32
         m_imgSrc = m_imgSrc.remove(0,8);
@@ -449,7 +447,6 @@ void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
                 polySelectResult.boxIdx = std::distance(m_dataVec.begin(), it);
                 polySelectResult.polyIdx = std::distance(checkedPoly.begin(), polyIter);
                 polySelectResult.isSelect = true;
-                qDebug() << Q_FUNC_INFO << "finish";
                 return;
             }
         }
