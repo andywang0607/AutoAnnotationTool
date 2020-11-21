@@ -54,14 +54,14 @@ void LabelCollector::paint(QPainter *painter){
         painter->drawRect((*iter)->rect);
         // Draw result polygon
         painter->setPen(m_penVec.at(3));
-        painter->drawPolygon((*iter)->resultPoly);
+        painter->drawPolygon((*iter)->poly);
 
         // Draw result point
         painter->setPen(m_penVec.at(2));
-        QVector<QPoint>::iterator pointIter;
+        QVector<QPointF>::iterator pointIter;
         int dataIdx = std::distance(m_dataVec.begin(),iter);
-        for(pointIter=(*iter)->resultPoly.begin();pointIter!=(*iter)->resultPoly.end();pointIter++){
-            int pointIdx = std::distance((*iter)->resultPoly.begin(),pointIter);
+        for(pointIter=(*iter)->poly.begin();pointIter!=(*iter)->poly.end();pointIter++){
+            int pointIdx = std::distance((*iter)->poly.begin(),pointIter);
             if(dataIdx == polySelectResult.boxIdx && pointIdx == polySelectResult.polyIdx){
                 QRadialGradient gradient(*pointIter,5,*pointIter);
                 gradient.setColorAt(0,QColor(220,118,51));
@@ -177,7 +177,8 @@ void LabelCollector::setImage(const QImage &image){
     m_image = image;
     if(image.width() != this->width() && image.height() != this->height()){
         m_imageScaled = image.scaled(this->width(), this->height(), Qt::KeepAspectRatio);
-        factorScaled = (float)image.width() / (float)m_imageScaled.width();
+        factorScaled = qMin((float)image.width() / (float)m_imageScaled.width(),
+             (float)image.height() / (float)m_imageScaled.height());
     }
     else{
         factorScaled = 1;
@@ -187,10 +188,9 @@ void LabelCollector::setImage(const QImage &image){
     imageHeight = m_imageScaled.height();
     // Redraw the image
     update();
-    emit imageChanged();
     // Remove all label while iamge change
     RemoveAllLabel();
-
+    emit imageChanged();
 }
 
 void LabelCollector::setImgSrc(QString imgSrc)
@@ -261,7 +261,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
     m_lastPoint = event->localPos();
     PosBoundaryCheck(m_lastPoint);
     if(polySelectResult.isSelect){
-        m_dataVec.at(polySelectResult.boxIdx)->resultPoly.setPoint(polySelectResult.polyIdx, m_lastPoint.toPoint());
+        m_dataVec.at(polySelectResult.boxIdx)->poly[polySelectResult.polyIdx] = m_lastPoint;
     }
     else if(!polySelectResult.isSelect && rectCornerSelectResult.isSelect){
         switch (rectCornerSelectResult.corner){
@@ -442,8 +442,8 @@ void LabelCollector::GetPolygonSelectResult(QPointF currentPos)
     PolygonSelectResult res;
     QVector<LabelData*>::iterator it;
     for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
-        QPolygon checkedPoly = ((*it)->resultPoly);
-        QPolygon::iterator polyIter;
+        QPolygonF checkedPoly = ((*it)->poly);
+        QPolygonF::iterator polyIter;
         for(polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++){
             if(DistanceBetween2Point(*polyIter,currentPos) < thresDistance){
                 polySelectResult.boxIdx = std::distance(m_dataVec.begin(), it);
@@ -561,6 +561,31 @@ void LabelCollector::appendData(QRectF rect)
     if(!(qAbs(rect.width())>2 && qAbs(rect.height())>2)) return;
     emit preItemAppended();
     LabelData *tmp = new LabelData(rect);
+    m_dataVec.push_back(tmp);
+    emit postItemAppended();
+}
+
+void LabelCollector::appendData(QRectF rect, QString labelClass)
+{
+    if(!(qAbs(rect.width())>2 && qAbs(rect.height())>2)) return;
+    emit preItemAppended();
+    LabelData *tmp = new LabelData(rect, labelClass);
+    m_dataVec.push_back(tmp);
+    emit postItemAppended();
+}
+
+void LabelCollector::appendData(QPolygonF poly, QString labelClass)
+{
+    emit preItemAppended();
+    LabelData *tmp = new LabelData(poly, labelClass);
+    m_dataVec.push_back(tmp);
+    emit postItemAppended();
+}
+
+void LabelCollector::appendData(QRectF rect, QPolygonF poly, QString labelClass)
+{
+    emit preItemAppended();
+    LabelData *tmp = new LabelData(rect, poly, labelClass);
     m_dataVec.push_back(tmp);
     emit postItemAppended();
 }

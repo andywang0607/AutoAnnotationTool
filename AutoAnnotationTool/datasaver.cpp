@@ -119,11 +119,11 @@ void DataSaver::SaveData(int mode)
             polyInfo.insert("group_id",QJsonValue::Null);
             polyInfo.insert("shape_type","polygon");
             QJsonArray ptArray;
-            int ptNum = labelCollector()->dataVec().at(i)->resultPoly.size();
+            int ptNum = labelCollector()->dataVec().at(i)->poly.size();
             for(int j = 0; j<ptNum; ++j){
                 QJsonArray curPtArray;
-                curPtArray.append(labelCollector()->dataVec().at(i)->resultPoly.at(j).x() * labelCollector()->getFactorScaled());
-                curPtArray.append(labelCollector()->dataVec().at(i)->resultPoly.at(j).y() * labelCollector()->getFactorScaled());
+                curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).x() * labelCollector()->getFactorScaled());
+                curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).y() * labelCollector()->getFactorScaled());
                 ptArray.append(curPtArray);
             }
             polyInfo.insert("points",ptArray);
@@ -138,6 +138,50 @@ void DataSaver::SaveData(int mode)
     file.write(JsonDocument.toJson());
     file.close();
     return;
+}
+
+void DataSaver::LoadData(int mode)
+{
+    QFileInfo fi(GetSavingPath());
+    if(!fi.exists()) return;
+    QFile file(GetSavingPath());
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonParseError JsonParseError;
+    QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);
+    file.close();
+
+    QJsonObject rootObject = JsonDocument.object();
+    QJsonValueRef ref = rootObject.find("shapes").value();
+    QJsonObject m_addvalue = ref.toObject();
+    QJsonArray shapeAll = ref.toArray();
+
+    QStringList labelName;
+
+    for (const auto& element : shapeAll) {
+        QString label = element.toObject()["label"].toString();
+        if(!labelName.contains(label)) labelName.push_back(label);
+        QString shapeType = element.toObject()["shape_type"].toString();
+        QJsonArray pointArray = element.toObject()["points"].toArray();
+        if(shapeType == "rectangle"){
+            QPointF tl(pointArray[0].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
+                    pointArray[0].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
+            QPointF br(pointArray[1].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
+                    pointArray[1].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
+            QRectF tmpRect(tl, br);
+            labelCollector()->appendData(tmpRect, label);
+        }
+        else if(shapeType == "polygon"){
+            QPolygonF tmpPoly;
+            for (const auto& point : pointArray) {
+                QJsonArray pointArray = point.toArray();
+                QPointF polyPoint(pointArray[0].toDouble() / labelCollector()->getFactorScaled(),
+                        pointArray[1].toDouble() / labelCollector()->getFactorScaled());
+                tmpPoly.append(polyPoint.toPoint());
+            }
+            labelName.contains(label) ? labelCollector()->dataVec().at(labelName.indexOf(label))->poly.swap(tmpPoly) :
+                                        labelCollector()->appendData(tmpPoly,label);
+        }
+    }
 }
 
 void DataSaver::setLabelCollector(LabelCollector *labelCollector)

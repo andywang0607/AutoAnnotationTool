@@ -92,6 +92,9 @@ Window {
             onHeightChanged: {
                 labelCollector.setImage(labelCollector.image)
             }
+            onImageChanged: {
+                dataSaver.LoadData(0)
+            }
         }
         Rectangle{
             id: listRect
