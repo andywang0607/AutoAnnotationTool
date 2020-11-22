@@ -21,7 +21,7 @@ private:
     cv::Rect getRoiRect(QRectF rect, qreal factor);
     void setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor);
 private:
-    cv::Mat m_imgOri;
+    cv::Mat m_originImg;
 };
 
 #endif // CVMODULE_H

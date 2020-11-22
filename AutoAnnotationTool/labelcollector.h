@@ -54,12 +54,12 @@ public:
 
 private:
     QImage m_image;
-    QImage m_imageScaled;
-    qreal factorScaled;
-    int imageWidth;
-    int imageHeight;
+    QImage m_scaledImg;
+    qreal m_scaledRatio;
+    int m_imgWidth;
+    int m_imgHeight;
     QString m_imgSrc;
-    QFileInfoList fileInfoList;
+    QFileInfoList m_fileInfoList;
 public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
@@ -105,10 +105,10 @@ private:
     QPointF m_currentPoint;
     QPointF m_firstPoint;
 
-    QPen m_penNormal;
-    QPen m_penHighlight;
-    QPen m_penPoint;
-    QPen m_penPoly;
+    QPen m_normalPen;
+    QPen m_highlightPen;
+    QPen m_pointPen;
+    QPen m_polyPen;
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
@@ -124,13 +124,13 @@ private:
     void getPolygonSelectResult(QPointF currentPos);
     void getRectCornerResult(QPointF currentPos);
     void getRectEdgeResult(QPointF currentPos);
-    PolygonSelectResult polySelectResult;
-    RectCornerSelectResult rectCornerSelectResult;
-    RectEdgeSelectResult rectEdgeSelectResult;
+    PolygonSelectResult m_polySelectResult;
+    RectCornerSelectResult m_rectCornerSelectResult;
+    RectEdgeSelectResult m_rectEdgeSelectResult;
 private:
-    std::unique_ptr<CvModule> cvModule;
-    QFuture<void> future;
-    QFutureWatcher<void> watcher;
+    std::unique_ptr<CvModule> m_cvModule;
+    QFuture<void> m_future;
+    QFutureWatcher<void> m_watcher;
     int m_fileIdx;
     CvParam* m_cvParam;
 };

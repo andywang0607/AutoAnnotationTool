@@ -73,11 +73,11 @@ void AnnotationManager::saveAnnotation(int mode)
     // Get imageData
     RootObject.insert("imageData", base64Encode());
 
-    // Get imageHeight
-    RootObject.insert("imageHeight", getImageHeight());
+    // Get m_imgHeight
+    RootObject.insert("m_imgHeight", getImageHeight());
 
-    // Get imageWidth
-    RootObject.insert("imageWidth", getImageWidth());
+    // Get m_imgWidth
+    RootObject.insert("m_imgWidth", getImageWidth());
 
     // flags
     RootObject.insert("flags",QJsonObject());
@@ -88,7 +88,7 @@ void AnnotationManager::saveAnnotation(int mode)
 
     // rectangle data
     if(mode == 0 || mode ==1){
-        qreal factorScaled = labelCollector()->getFactorScaled();
+        qreal m_scaledRatio = labelCollector()->getFactorScaled();
         for(int i =0 ;i<boxNum;++i){
             QJsonObject rectInfo;
             rectInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
@@ -97,11 +97,11 @@ void AnnotationManager::saveAnnotation(int mode)
             rectInfo.insert("flags",QJsonObject());
             QJsonArray ptArray;
             QJsonArray tlArray;
-            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().x() * factorScaled);
-            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().y() * factorScaled);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().x() * m_scaledRatio);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().y() * m_scaledRatio);
             QJsonArray brArray;
-            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().x() * factorScaled);
-            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().y() * factorScaled);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().x() * m_scaledRatio);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().y() * m_scaledRatio);
             ptArray.append(tlArray);
             ptArray.append(brArray);
             rectInfo.insert("points",ptArray);
