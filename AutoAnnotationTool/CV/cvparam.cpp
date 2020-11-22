@@ -1,23 +1,23 @@
 #include "cvparam.h"
 
-CVParam::CVParam(QObject *parent) : QObject(parent)
+CvParam::CvParam(QObject *parent) : QObject(parent)
   , m_iteration(4)
   , m_epsilon(1)
 {
 
 }
 
-int CVParam::iteration() const
+int CvParam::iteration() const
 {
     return m_iteration;
 }
 
-qreal CVParam::epsilon() const
+qreal CvParam::epsilon() const
 {
     return m_epsilon;
 }
 
-void CVParam::setIteration(int iteration)
+void CvParam::setIteration(int iteration)
 {
     if (m_iteration == iteration)
         return;
@@ -26,7 +26,7 @@ void CVParam::setIteration(int iteration)
     emit iterationChanged(m_iteration);
 }
 
-void CVParam::setEpsilon(qreal epsilon)
+void CvParam::setEpsilon(qreal epsilon)
 {
     if (qFuzzyCompare(m_epsilon, epsilon))
         return;

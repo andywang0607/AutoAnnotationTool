@@ -6,10 +6,10 @@
 
 #include <opencv2/core.hpp>
 
-class OpenCVTypeConverter
+class OpencvTypeConverter
 {
 public:
-    OpenCVTypeConverter();
+    OpencvTypeConverter();
     static cv::Rect QRect2CVRect(QRectF rect);
     static QRectF CVRect2QRect(cv::Rect rect);
     static cv::Point QPoint2CVPoint(QPoint pt);

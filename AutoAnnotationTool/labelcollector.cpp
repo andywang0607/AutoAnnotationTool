@@ -12,7 +12,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_penHighlight(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoint(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_penPoly(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , cvModule(std::make_unique<CVModule>())
+  , cvModule(std::make_unique<CvModule>())
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     m_penVec.push_back(m_penNormal);
@@ -27,7 +27,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     menu.addAction(QStringLiteral("Get Polygon"),this, [&](){
         setCursor(QCursor(Qt::BusyCursor));
-        future = QtConcurrent::run(cvModule.get(), &CVModule::GetContour, m_dataVec, m_selectLabelIdx.front(), getFactorScaled(), m_cvParam);
+        future = QtConcurrent::run(cvModule.get(), &CvModule::GetContour, m_dataVec, m_selectLabelIdx.front(), getFactorScaled(), m_cvParam);
         watcher.setFuture(future);
     });
 
@@ -164,7 +164,7 @@ int LabelCollector::fileIdx() const
     return m_fileIdx;
 }
 
-CVParam *LabelCollector::cvParam() const
+CvParam *LabelCollector::cvParam() const
 {
     return m_cvParam;
 }
@@ -598,7 +598,7 @@ void LabelCollector::setFileIdx(int fileIdx)
     setImgSrc(fileInfoList.at(m_fileIdx).absoluteFilePath());
 }
 
-void LabelCollector::setCvParam(CVParam *cvParam)
+void LabelCollector::setCvParam(CvParam *cvParam)
 {
     if (m_cvParam == cvParam)
         return;

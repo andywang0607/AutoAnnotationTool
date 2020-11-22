@@ -85,7 +85,7 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: 500
-            cvParam: CVParam
+            cvParam: CvParam
             onWidthChanged: {
                 labelCollector.setImage(labelCollector.image)
             }

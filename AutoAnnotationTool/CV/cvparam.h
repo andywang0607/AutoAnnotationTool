@@ -3,14 +3,14 @@
 
 #include <QObject>
 
-class CVParam : public QObject
+class CvParam : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int iteration READ iteration WRITE setIteration NOTIFY iterationChanged)
     Q_PROPERTY(qreal epsilon READ epsilon WRITE setEpsilon NOTIFY epsilonChanged)
 
 public:
-    explicit CVParam(QObject *parent = nullptr);
+    explicit CvParam(QObject *parent = nullptr);
 
     int iteration() const;
 

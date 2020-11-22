@@ -30,7 +30,7 @@ class LabelCollector : public QQuickPaintedItem
     Q_PROPERTY(QImage image READ image WRITE setImage NOTIFY imageChanged)
     Q_PROPERTY(QString imgSrc READ imgSrc WRITE setImgSrc NOTIFY imgSrcChanged)
     Q_PROPERTY(int fileIdx READ fileIdx WRITE setFileIdx NOTIFY fileIdxChanged)
-    Q_PROPERTY(CVParam* cvParam READ cvParam WRITE setCvParam NOTIFY cvParamChanged)
+    Q_PROPERTY(CvParam* cvParam READ cvParam WRITE setCvParam NOTIFY cvParamChanged)
 
 public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
@@ -50,7 +50,7 @@ public:
     qreal getFactorScaled() const;
     int fileIdx() const;
 
-    CVParam *cvParam() const;
+    CvParam *cvParam() const;
 
 private:
     QImage m_image;
@@ -71,7 +71,7 @@ public slots:
 
     void setFileIdx(int fileIdx);
 
-    void setCvParam(CVParam* cvParam);
+    void setCvParam(CvParam* cvParam);
 
 signals:
     void imageChanged();
@@ -90,7 +90,7 @@ signals:
     void fileIdxChanged(int fileIdx);
 
     //mouse behavior
-    void cvParamChanged(CVParam* cvParam);
+    void cvParamChanged(CvParam* cvParam);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -128,11 +128,11 @@ private:
     RectCornerSelectResult rectCornerSelectResult;
     RectEdgeSelectResult rectEdgeSelectResult;
 private:
-    std::unique_ptr<CVModule> cvModule;
+    std::unique_ptr<CvModule> cvModule;
     QFuture<void> future;
     QFutureWatcher<void> watcher;
     int m_fileIdx;
-    CVParam* m_cvParam;
+    CvParam* m_cvParam;
 };
 
 #endif // LABELCOLLECTOR_H

@@ -18,9 +18,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<LabelDataModel>("LabelDataModel", 1, 0, "LabelDataModel");
     qmlRegisterType<AnnotationManager>("AnnotationManager", 1, 0, "AnnotationManager");
 
-    CVParam cvParam;
+    CvParam cvParam;
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("CVParam", &cvParam);
+    engine.rootContext()->setContextProperty("CvParam", &cvParam);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {

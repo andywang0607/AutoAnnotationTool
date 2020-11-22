@@ -10,12 +10,12 @@
 
 #include "opencv2/core.hpp"
 
-class CVModule
+class CvModule
 {
 public:
-    CVModule();
+    CvModule();
     void GetCroppedImg(QRectF rect, qreal factor);
-    void GetContour(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CVParam *param);
+    void GetContour(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CvParam *param);
     void GetOriginImg(QString imgSrc);
 private:
     cv::Rect GetROIRect(QRectF rect, qreal factor);
