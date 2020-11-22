@@ -66,7 +66,7 @@ Window {
                 Layout.fillWidth: true
                 text: qsTr("Save File")
                 onClicked: {
-                    dataSaver.SaveAnnotation(0)
+                    dataSaver.saveAnnotation(0)
                 }
             }
             Button{
@@ -93,7 +93,7 @@ Window {
                 labelCollector.setImage(labelCollector.image)
             }
             onImageChanged: {
-                dataSaver.LoadAnnotation(0)
+                dataSaver.loadAnnotation(0)
             }
         }
         Rectangle{
@@ -154,7 +154,7 @@ Window {
                             Layout.fillHeight: true
                             text: "Remove"
                             onClicked: {
-                                labelCollector.RemoveLabel(index)
+                                labelCollector.removeLabel(index)
                             }
                         }
                     }

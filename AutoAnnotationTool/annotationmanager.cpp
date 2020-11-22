@@ -18,7 +18,7 @@ LabelCollector *AnnotationManager::labelCollector() const
     return m_labelCollector;
 }
 
-QString AnnotationManager::GetSavingPath()
+QString AnnotationManager::getSavingPath()
 {
     QString imgSrc = labelCollector()->imgSrc();
     QFileInfo info(imgSrc);
@@ -26,13 +26,13 @@ QString AnnotationManager::GetSavingPath()
     return savingPath;
 }
 
-QString AnnotationManager::GetImagePath()
+QString AnnotationManager::getImagePath()
 {
     QFileInfo info(labelCollector()->imgSrc());
     return info.fileName();
 }
 
-QString AnnotationManager::Base64Encode()
+QString AnnotationManager::base64Encode()
 {
     QByteArray ba;
     QBuffer buf(&ba);
@@ -46,19 +46,19 @@ QString AnnotationManager::Base64Encode()
     return hexed;
 }
 
-int AnnotationManager::GetImageHeight()
+int AnnotationManager::getImageHeight()
 {
     return labelCollector()->image().height();
 }
 
-int AnnotationManager::GetImageWidth()
+int AnnotationManager::getImageWidth()
 {
     return labelCollector()->image().width();
 }
 
-void AnnotationManager::SaveAnnotation(int mode)
+void AnnotationManager::saveAnnotation(int mode)
 {
-    QString savingPath = GetSavingPath();
+    QString savingPath = getSavingPath();
     QFile file(savingPath);
     file.open(QIODevice::WriteOnly);
     QJsonParseError JsonParseError;
@@ -68,16 +68,16 @@ void AnnotationManager::SaveAnnotation(int mode)
     RootObject.insert("version", "0.0.1");
 
     // Get imagePath
-    RootObject.insert("imagePath",GetImagePath());
+    RootObject.insert("imagePath",getImagePath());
 
     // Get imageData
-    RootObject.insert("imageData", Base64Encode());
+    RootObject.insert("imageData", base64Encode());
 
     // Get imageHeight
-    RootObject.insert("imageHeight", GetImageHeight());
+    RootObject.insert("imageHeight", getImageHeight());
 
     // Get imageWidth
-    RootObject.insert("imageWidth", GetImageWidth());
+    RootObject.insert("imageWidth", getImageWidth());
 
     // flags
     RootObject.insert("flags",QJsonObject());
@@ -138,11 +138,11 @@ void AnnotationManager::SaveAnnotation(int mode)
     return;
 }
 
-void AnnotationManager::LoadAnnotation(int mode)
+void AnnotationManager::loadAnnotation(int mode)
 {
-    QFileInfo fi(GetSavingPath());
+    QFileInfo fi(getSavingPath());
     if(!fi.exists()) return;
-    QFile file(GetSavingPath());
+    QFile file(getSavingPath());
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonParseError JsonParseError;
     QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);

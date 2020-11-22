@@ -12,14 +12,14 @@ public:
     explicit AnnotationManager(QObject *parent = nullptr);
     LabelCollector * labelCollector() const;
 public:
-    Q_INVOKABLE void SaveAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
-    Q_INVOKABLE void LoadAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
+    Q_INVOKABLE void saveAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
+    Q_INVOKABLE void loadAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
 private:
-    QString GetSavingPath();
-    QString GetImagePath();
-    QString Base64Encode();
-    int GetImageHeight();
-    int GetImageWidth();
+    QString getSavingPath();
+    QString getImagePath();
+    QString base64Encode();
+    int getImageHeight();
+    int getImageWidth();
 
 public slots:
     void setLabelCollector(LabelCollector * labelCollector);

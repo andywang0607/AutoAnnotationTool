@@ -14,12 +14,12 @@ class CvModule
 {
 public:
     CvModule();
-    void GetCroppedImg(QRectF rect, qreal factor);
-    void GetContour(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CvParam *param);
-    void GetOriginImg(QString imgSrc);
+    void getCroppedImg(QRectF rect, qreal factor);
+    void getPoly(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CvParam *param);
+    void getOriginImg(QString imgSrc);
 private:
-    cv::Rect GetROIRect(QRectF rect, qreal factor);
-    void SetContours(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor);
+    cv::Rect getRoiRect(QRectF rect, qreal factor);
+    void setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor);
 private:
     cv::Mat m_imgOri;
 };

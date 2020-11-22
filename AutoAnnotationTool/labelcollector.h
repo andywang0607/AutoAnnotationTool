@@ -36,12 +36,12 @@ public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
     void paint(QPainter *painter);
 public:
-    Q_INVOKABLE void RemoveLabel(int idx);
+    Q_INVOKABLE void removeLabel(int idx);
 private:
-    bool GetExistLabel(QPointF pt);
-    void RemoveAllLabel();
-    double DistanceBetween2Point(QPointF p1, QPointF p2);
-    double DistanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
+    bool getExistLabel(QPointF pt);
+    void removeAllLabel();
+    double distanceBetweenPoints(QPointF p1, QPointF p2);
+    double distanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
 public:
     QImage image() const;
     QString imgSrc() const;
@@ -118,12 +118,12 @@ private:
     // mouse select related
 private:
     void setCursorIcon();
-    bool RectBoundaryCheck(QRectF rect);
-    void PosBoundaryCheck(QPointF &pos);
-    void CheckRectValid();
-    void GetPolygonSelectResult(QPointF currentPos);
-    void GetRectCornerResult(QPointF currentPos);
-    void GetRectEdgeResult(QPointF currentPos);
+    bool rectBoundaryCheck(QRectF rect);
+    void posBoundaryCheck(QPointF &pos);
+    void isRectValid();
+    void getPolygonSelectResult(QPointF currentPos);
+    void getRectCornerResult(QPointF currentPos);
+    void getRectEdgeResult(QPointF currentPos);
     PolygonSelectResult polySelectResult;
     RectCornerSelectResult rectCornerSelectResult;
     RectEdgeSelectResult rectEdgeSelectResult;

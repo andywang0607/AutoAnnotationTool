@@ -13,23 +13,23 @@ CvModule::CvModule()
 
 }
 
-void CvModule::GetCroppedImg(QRectF rect, qreal factor)
+void CvModule::getCroppedImg(QRectF rect, qreal factor)
 {
-    cv::Rect rectOri = OpencvTypeConverter::QRect2CVRect(QRectF(rect.topLeft() * factor,
+    cv::Rect rectOri = OpencvTypeConverter::qrect2CvRect(QRectF(rect.topLeft() * factor,
                                                                 rect.bottomRight() * factor));
     cv::Mat croppedImg = m_imgOri(rectOri);
     cv::namedWindow("Cropped");
     cv::imshow("Cropped", croppedImg);
 }
 
-void CvModule::GetContour(QVector<LabelData *> &dataVec, int labelIdx, qreal factor, CvParam *param)
+void CvModule::getPoly(QVector<LabelData *> &dataVec, int labelIdx, qreal factor, CvParam *param)
 {
     qDebug()<< Q_FUNC_INFO << "start";
     if(m_imgOri.empty()) return;
 
     // grabcut
     cv::Mat grab, bg, fg;
-    cv::grabCut(m_imgOri, grab, GetROIRect(dataVec.at(labelIdx)->rect, factor), bg, fg, param->iteration(), cv::GC_INIT_WITH_RECT);
+    cv::grabCut(m_imgOri, grab, getRoiRect(dataVec.at(labelIdx)->rect, factor), bg, fg, param->iteration(), cv::GC_INIT_WITH_RECT);
 
     // equalizeHist
     equalizeHist(grab, grab);
@@ -60,11 +60,11 @@ void CvModule::GetContour(QVector<LabelData *> &dataVec, int labelIdx, qreal fac
     }
     std::vector<std::vector<cv::Point>> contoursPoly(contours.size());
     approxPolyDP(cv::Mat(contours[largestContourIndex]), contoursPoly[largestContourIndex], param->epsilon(), true);
-    SetContours(dataVec, labelIdx, contoursPoly.at(largestContourIndex), factor);
+    setPoly(dataVec, labelIdx, contoursPoly.at(largestContourIndex), factor);
     qDebug()<< Q_FUNC_INFO << "end";
 }
 
-void CvModule::SetContours(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor){
+void CvModule::setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor){
     qDebug()<< Q_FUNC_INFO << "start";
     QPolygon tmpPoly;
 
@@ -77,12 +77,12 @@ void CvModule::SetContours(QVector<LabelData*> &dataVec, int labelIdx, std::vect
     qDebug()<< Q_FUNC_INFO << "end";
 }
 
-void CvModule::GetOriginImg(QString imgSrc){
+void CvModule::getOriginImg(QString imgSrc){
     m_imgOri = cv::imread(imgSrc.toStdString(),1);
 }
 
-cv::Rect CvModule::GetROIRect(QRectF rect, qreal factor){
+cv::Rect CvModule::getRoiRect(QRectF rect, qreal factor){
     QRectF rectOri(rect.topLeft() * factor,
                    rect.bottomRight() * factor);
-    return OpencvTypeConverter::QRect2CVRect(rectOri);
+    return OpencvTypeConverter::qrect2CvRect(rectOri);
 }
