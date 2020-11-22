@@ -25,7 +25,8 @@ void CvModule::getCroppedImg(QRectF rect, qreal factor)
 void CvModule::getPoly(QVector<LabelData *> &dataVec, int labelIdx, qreal factor, CvParam *param)
 {
     qDebug()<< Q_FUNC_INFO << "start";
-    if(m_originImg.empty()) return;
+    if (m_originImg.empty())
+        return;
 
     // grabcut
     cv::Mat grab, bg, fg;
@@ -68,7 +69,7 @@ void CvModule::setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<c
     qDebug()<< Q_FUNC_INFO << "start";
     QPolygon tmpPoly;
 
-    for(int i =0;i< contoursPoly.size();++i){
+    for (int i =0;i< contoursPoly.size();++i) {
         cv::Point tmp = contoursPoly[i];
         QPoint resultPoint = QPoint(tmp.x*(1.0f/factor),tmp.y*(1.0f/factor));
         tmpPoly.push_back(resultPoint);

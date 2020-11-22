@@ -132,7 +132,7 @@ private:
     QFuture<void> m_future;
     QFutureWatcher<void> m_watcher;
     int m_fileIdx;
-    CvParam* m_cvParam;
+    CvParam *m_cvParam;
 };
 
 #endif // LABELCOLLECTOR_H

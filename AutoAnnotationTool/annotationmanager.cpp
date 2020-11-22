@@ -87,9 +87,9 @@ void AnnotationManager::saveAnnotation(int mode)
     QJsonArray shape;
 
     // rectangle data
-    if(mode == 0 || mode ==1){
+    if (mode == 0 || mode ==1) {
         qreal m_scaledRatio = labelCollector()->getFactorScaled();
-        for(int i =0 ;i<boxNum;++i){
+        for (int i =0 ;i<boxNum;++i) {
             QJsonObject rectInfo;
             rectInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
             rectInfo.insert("group_id",QJsonValue::Null);
@@ -109,8 +109,8 @@ void AnnotationManager::saveAnnotation(int mode)
         }
     }
     // polygon data
-    if(mode == 0 || mode ==2){
-        for(int i =0 ;i<boxNum;++i){
+    if (mode == 0 || mode ==2) {
+        for (int i =0 ;i<boxNum;++i) {
             QJsonObject polyInfo;
             polyInfo.insert("flags",QJsonObject());
             polyInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
@@ -118,7 +118,7 @@ void AnnotationManager::saveAnnotation(int mode)
             polyInfo.insert("shape_type","polygon");
             QJsonArray ptArray;
             int ptNum = labelCollector()->dataVec().at(i)->poly.size();
-            for(int j = 0; j<ptNum; ++j){
+            for (int j = 0; j<ptNum; ++j) {
                 QJsonArray curPtArray;
                 curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).x() * labelCollector()->getFactorScaled());
                 curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).y() * labelCollector()->getFactorScaled());
@@ -141,7 +141,8 @@ void AnnotationManager::saveAnnotation(int mode)
 void AnnotationManager::loadAnnotation(int mode)
 {
     QFileInfo fi(getSavingPath());
-    if(!fi.exists()) return;
+    if (!fi.exists())
+        return;
     QFile file(getSavingPath());
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonParseError JsonParseError;
@@ -157,18 +158,17 @@ void AnnotationManager::loadAnnotation(int mode)
 
     for (const auto& element : shapeAll) {
         QString label = element.toObject()["label"].toString();
-        if(!labelName.contains(label)) labelName.push_back(label);
+        if (!labelName.contains(label)) labelName.push_back(label);
         QString shapeType = element.toObject()["shape_type"].toString();
         QJsonArray pointArray = element.toObject()["points"].toArray();
-        if(shapeType == "rectangle"){
+        if (shapeType == "rectangle") {
             QPointF tl(pointArray[0].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
                     pointArray[0].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
             QPointF br(pointArray[1].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
                     pointArray[1].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
             QRectF tmpRect(tl, br);
             labelCollector()->appendData(tmpRect, label);
-        }
-        else if(shapeType == "polygon"){
+        }else if (shapeType == "polygon") {
             QPolygonF tmpPoly;
             for (const auto& point : pointArray) {
                 QJsonArray pointArray = point.toArray();

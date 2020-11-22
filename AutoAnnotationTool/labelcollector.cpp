@@ -20,12 +20,12 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
     m_penVec.push_back(m_pointPen);
     m_penVec.push_back(m_polyPen);
 
-    connect(&m_watcher, &QFutureWatcher<void>::finished, this, [&](){
+    connect(&m_watcher, &QFutureWatcher<void>::finished, this, [&]() {
         this->update();
         setCursor(QCursor(Qt::ArrowCursor));
     });
 
-    menu.addAction(QStringLiteral("Get Polygon"),this, [&](){
+    menu.addAction(QStringLiteral("Get Polygon"),this, [&]() {
         setCursor(QCursor(Qt::BusyCursor));
         m_future = QtConcurrent::run(m_cvModule.get(), &CvModule::getPoly, m_dataVec, m_selectLabelIdx.front(), getFactorScaled(), m_cvParam);
         m_watcher.setFuture(m_future);
@@ -34,20 +34,21 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 }
 
 void LabelCollector::paint(QPainter *painter){
-    if(!this->m_scaledImg.isNull() ){
+    if (!this->m_scaledImg.isNull()) {
         QRect rect(m_scaledImg.rect());
         painter->drawImage(rect.topLeft(), m_scaledImg);
     }
-    if(m_selectLabelIdx.empty()){
-        if(m_mouseMoved){
+    if (m_selectLabelIdx.empty()) {
+        if (m_mouseMoved) {
             painter->setPen(m_normalPen);
             painter->setRenderHint(QPainter::Antialiasing);
             painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
         }
     }
-    if(m_dataVec.empty()) return;
+    if (m_dataVec.empty())
+        return;
     QVector<LabelData*>::iterator iter;
-    for(iter=m_dataVec.begin();iter!=m_dataVec.end();iter++){
+    for (iter=m_dataVec.begin();iter!=m_dataVec.end();iter++) {
         // Draw bounding box
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(m_penVec.at((*iter)->penIdx));
@@ -60,9 +61,9 @@ void LabelCollector::paint(QPainter *painter){
         painter->setPen(m_penVec.at(2));
         QVector<QPointF>::iterator pointIter;
         int dataIdx = std::distance(m_dataVec.begin(),iter);
-        for(pointIter=(*iter)->poly.begin();pointIter!=(*iter)->poly.end();pointIter++){
+        for (pointIter=(*iter)->poly.begin();pointIter!=(*iter)->poly.end();pointIter++) {
             int pointIdx = std::distance((*iter)->poly.begin(),pointIter);
-            if(dataIdx == m_polySelectResult.boxIdx && pointIdx == m_polySelectResult.polyIdx){
+            if (dataIdx == m_polySelectResult.boxIdx && pointIdx == m_polySelectResult.polyIdx) {
                 QRadialGradient gradient(*pointIter,5,*pointIter);
                 gradient.setColorAt(0,QColor(220,118,51));
                 gradient.setColorAt(0.5,QColor(229,152,102));
@@ -70,8 +71,7 @@ void LabelCollector::paint(QPainter *painter){
                 painter->setPen(QColor(237,187,153));
                 painter->setBrush(QBrush(gradient));
                 painter->drawEllipse(*pointIter,5,5);
-            }
-            else{
+            } else {
                 painter->setPen(m_penVec.at(2));
                 painter->setBrush(QBrush(Qt::NoBrush));
                 painter->drawPoint(*pointIter);
@@ -95,7 +95,7 @@ bool LabelCollector::getExistLabel(QPointF pt)
     bool res = false;
     m_selectLabelIdx.clear();
     QVector<LabelData*>::iterator it;
-    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+    for (it=m_dataVec.begin(); it!=m_dataVec.end(); it++) {
         if((*it)->rect.contains(pt.toPoint())){
             m_selectLabelIdx.push_back(std::distance(m_dataVec.begin(),it));
             (*it)->isSelect = true;
@@ -108,9 +108,8 @@ bool LabelCollector::getExistLabel(QPointF pt)
 void LabelCollector::removeAllLabel()
 {
     int size = m_dataVec.size();
-    for(int i=0;i<size;++i){
+    for (int i=0;i<size;++i)
         removeLabel(0);
-    }
 }
 
 double LabelCollector::distanceBetweenPoints(QPointF p1, QPointF p2)
@@ -170,16 +169,14 @@ CvParam *LabelCollector::cvParam() const
 }
 
 void LabelCollector::setImage(const QImage &image){
-    if(image.isNull()){
+    if (image.isNull())
         return;
-    }
     m_image = image;
-    if(image.width() != this->width() && image.height() != this->height()){
+    if (image.width() != this->width() && image.height() != this->height()) {
         m_scaledImg = image.scaled(this->width(), this->height(), Qt::KeepAspectRatio);
         m_scaledRatio = qMin((float)image.width() / (float)m_scaledImg.width(),
-             (float)image.height() / (float)m_scaledImg.height());
-    }
-    else{
+                             (float)image.height() / (float)m_scaledImg.height());
+    } else{
         m_scaledRatio = 1;
         this->m_image = image;
     }
@@ -197,7 +194,7 @@ void LabelCollector::setImgSrc(QString imgSrc)
     if (m_imgSrc == imgSrc)
         return;
     m_imgSrc = imgSrc;
-    if(m_imgSrc.left(4) == "file"){
+    if (m_imgSrc.left(4) == "file"){
 #ifdef _WIN32
         m_imgSrc = m_imgSrc.remove(0,8);
 #else
@@ -205,10 +202,9 @@ void LabelCollector::setImgSrc(QString imgSrc)
 #endif
     }
     QFileInfo fi(m_imgSrc);
-    if(fi.isFile()){
+    if (fi.isFile()) {
         setImage(QImage(m_imgSrc));
-    }
-    else {
+    } else {
         QDir dir(m_imgSrc);
         QStringList filters;
         filters << "*.jpg" << "*.png" << "*.bmp";
@@ -224,14 +220,14 @@ void LabelCollector::setImgSrc(QString imgSrc)
 void LabelCollector::mousePressEvent(QMouseEvent *event)
 {
     m_mouseMoved = false;
-    if(!(event->button() & acceptedMouseButtons()))
-    {
+    if (!(event->button() & acceptedMouseButtons())){
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
-    if(m_scaledImg.isNull()) return;
+    if (m_scaledImg.isNull())
+        return;
     getExistLabel(event->localPos());
-    if(Qt::LeftButton == event->button()){
+    if (Qt::LeftButton == event->button()) {
         m_mousePressed = true;
         getPolygonSelectResult(event->localPos());
         getRectCornerResult(event->localPos());
@@ -242,27 +238,27 @@ void LabelCollector::mousePressEvent(QMouseEvent *event)
         setCursorIcon();
         event->setAccepted(true);
     }
-    if(Qt::RightButton == event->button()){
-        if(m_selectLabelIdx.empty()) return;
+    if (Qt::RightButton == event->button()) {
+        if(m_selectLabelIdx.empty())
+            return;
         menu.exec(QCursor::pos());
     }
 }
 
 void LabelCollector::mouseMoveEvent(QMouseEvent *event)
 {
-    if(!m_mouseEnabled || !m_mousePressed)
-    {
+    if (!m_mouseEnabled || !m_mousePressed) {
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
-    if(Qt::RightButton == event->button()) return;
+    if (Qt::RightButton == event->button())
+        return;
     m_lastPoint = event->localPos();
     posBoundaryCheck(m_lastPoint);
-    if(m_polySelectResult.isSelect){
+    if (m_polySelectResult.isSelect) {
         m_dataVec.at(m_polySelectResult.boxIdx)->poly[m_polySelectResult.polyIdx] = m_lastPoint;
-    }
-    else if(!m_polySelectResult.isSelect && m_rectCornerSelectResult.isSelect){
-        switch (m_rectCornerSelectResult.corner){
+    } else if (!m_polySelectResult.isSelect && m_rectCornerSelectResult.isSelect) {
+        switch (m_rectCornerSelectResult.corner) {
         case 0:
             m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setTopLeft(m_lastPoint);
             break;
@@ -278,8 +274,7 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
         default:
             break;
         }
-    }
-    else if(!m_polySelectResult.isSelect && !m_rectCornerSelectResult.isSelect && m_rectEdgeSelectResult.isSelect){
+    } else if (!m_polySelectResult.isSelect && !m_rectCornerSelectResult.isSelect && m_rectEdgeSelectResult.isSelect) {
         switch (m_rectEdgeSelectResult.line){
         case 0:
             m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setLeft(m_lastPoint.x());
@@ -296,18 +291,15 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
         default:
             break;
         }
-    }
-    else if(!m_selectLabelIdx.empty()){
+    } else if (!m_selectLabelIdx.empty()) {
         QPointF offset = m_lastPoint - m_currentPoint;
         m_currentPoint = m_lastPoint;
         for(auto const &idx : m_selectLabelIdx){
             m_dataVec.at(idx)->rect.translate(offset);
-            if(!rectBoundaryCheck(m_dataVec.at(idx)->rect))
+            if (!rectBoundaryCheck(m_dataVec.at(idx)->rect))
                 m_dataVec.at(idx)->rect.translate(-offset);
         }
-    }
-    else
-    {
+    } else {
         m_mouseMoved = true;
         m_lastPoint = event->localPos();
     }
@@ -316,27 +308,27 @@ void LabelCollector::mouseMoveEvent(QMouseEvent *event)
 
 void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(!m_mouseEnabled || !(event->button() & acceptedMouseButtons()))
-    {
+    if (!m_mouseEnabled || !(event->button() & acceptedMouseButtons())) {
         QQuickPaintedItem::mousePressEvent(event);
         return;
     }
     setCursor(QCursor(Qt::ArrowCursor));
-    if(Qt::RightButton == event->button()) return;
+    if (Qt::RightButton == event->button())
+        return;
     m_mousePressed = false;
     m_mouseMoved = false;
     isRectValid();
-    if(m_polySelectResult.isSelect){
+    if (m_polySelectResult.isSelect) {
         PolygonSelectResult defaultResult;
         m_polySelectResult = defaultResult;
         update();
         return;
     }
-    if(m_polySelectResult.isSelect || m_rectEdgeSelectResult.isSelect || m_rectCornerSelectResult.isSelect)
+    if (m_polySelectResult.isSelect || m_rectEdgeSelectResult.isSelect || m_rectCornerSelectResult.isSelect)
         return;
-    if(!m_selectLabelIdx.empty())
+    if (!m_selectLabelIdx.empty())
         return;
-    if(m_firstPoint != m_lastPoint){
+    if (m_firstPoint != m_lastPoint){
         QPoint point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
         QPoint point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
         appendData(QRectF(point_lt,point_rb));
@@ -346,10 +338,9 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
 
 void LabelCollector::setCursorIcon()
 {
-    if(m_polySelectResult.isSelect){
+    if (m_polySelectResult.isSelect){
         setCursor(QCursor(Qt::ArrowCursor));
-    }
-    else if(m_rectCornerSelectResult.isSelect){
+    } else if (m_rectCornerSelectResult.isSelect){
         switch (m_rectCornerSelectResult.corner){
         case 0:
             setCursor(QCursor(Qt::SizeFDiagCursor));
@@ -365,7 +356,7 @@ void LabelCollector::setCursorIcon()
             break;
         }
     }
-    else if(m_rectEdgeSelectResult.isSelect){
+    else if (m_rectEdgeSelectResult.isSelect){
         switch (m_rectEdgeSelectResult.line){
         case 0:
             setCursor(QCursor(Qt::SizeHorCursor));
@@ -381,7 +372,7 @@ void LabelCollector::setCursorIcon()
             break;
         }
     }
-    else if(!m_selectLabelIdx.empty()){
+    else if (!m_selectLabelIdx.empty()){
         setCursor(QCursor(Qt::ClosedHandCursor));
     }
     else{
@@ -391,24 +382,28 @@ void LabelCollector::setCursorIcon()
 
 bool LabelCollector::rectBoundaryCheck(QRectF rect)
 {
-    if(rect.top() < 0) return false;
-    if(rect.right() > m_scaledImg.width()) return false;
-    if(rect.bottom() > m_scaledImg.height()) return false;
-    if(rect.left() < 0) return false;
+    if (rect.top() < 0)
+        return false;
+    if (rect.right() > m_scaledImg.width())
+        return false;
+    if (rect.bottom() > m_scaledImg.height())
+        return false;
+    if (rect.left() < 0)
+        return false;
     return true;
 }
 
 void LabelCollector::posBoundaryCheck(QPointF &pos)
 {
-    if(pos.x() < 0) pos.setX(0);
-    if(pos.x() > m_scaledImg.width()) pos.setX(m_scaledImg.width());
-    if(pos.y() > m_scaledImg.height()) pos.setY(m_scaledImg.height());
-    if(pos.y() < 0) pos.setY(0);
+    if (pos.x() < 0) pos.setX(0);
+    if (pos.x() > m_scaledImg.width()) pos.setX(m_scaledImg.width());
+    if (pos.y() > m_scaledImg.height()) pos.setY(m_scaledImg.height());
+    if (pos.y() < 0) pos.setY(0);
 }
 
 void LabelCollector::isRectValid()
 {
-    if(m_rectCornerSelectResult.isSelect){
+    if(m_rectCornerSelectResult.isSelect) {
         QPointF topLeft;
         QPointF bottomRight;
         topLeft.setX(qMin(m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.left(),m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.right()));
@@ -419,8 +414,7 @@ void LabelCollector::isRectValid()
 
         m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setTopLeft(topLeft);
         m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setBottomRight(bottomRight);
-    }
-    else if(m_rectEdgeSelectResult.isSelect){
+    } else if(m_rectEdgeSelectResult.isSelect) {
 
         QPointF topLeft;
         QPointF bottomRight;
@@ -439,11 +433,11 @@ void LabelCollector::getPolygonSelectResult(QPointF currentPos)
 {
     PolygonSelectResult res;
     QVector<LabelData*>::iterator it;
-    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+    for (it=m_dataVec.begin(); it!=m_dataVec.end(); it++) {
         QPolygonF checkedPoly = ((*it)->poly);
         QPolygonF::iterator polyIter;
-        for(polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++){
-            if(distanceBetweenPoints(*polyIter,currentPos) < thresDistance){
+        for (polyIter = checkedPoly.begin(); polyIter != checkedPoly.end(); polyIter++) {
+            if (distanceBetweenPoints(*polyIter,currentPos) < thresDistance) {
                 m_polySelectResult.boxIdx = std::distance(m_dataVec.begin(), it);
                 m_polySelectResult.polyIdx = std::distance(checkedPoly.begin(), polyIter);
                 m_polySelectResult.isSelect = true;
@@ -459,12 +453,12 @@ void LabelCollector::getRectCornerResult(QPointF pt)
     RectCornerSelectResult res;
     m_rectCornerSelectResult = res;
     QVector<LabelData*>::iterator it;
-    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+    for (it=m_dataVec.begin(); it!=m_dataVec.end(); it++) {
         double length = 0.0;
         // topleft
         QPointF tmp = (*it)->rect.topLeft() - pt;
         length = std::sqrt(std::pow(tmp.x(), 2) + std::pow(tmp.y(), 2));
-        if(length < thresDistance){
+        if (length < thresDistance) {
             m_rectCornerSelectResult.isSelect = true;
             m_rectCornerSelectResult.corner = 0;
             m_rectCornerSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -473,7 +467,7 @@ void LabelCollector::getRectCornerResult(QPointF pt)
         // topRight
         tmp = (*it)->rect.topRight() - pt;
         length = std::sqrt(std::pow(tmp.x(), 2) + std::pow(tmp.y(), 2));
-        if(length < thresDistance){
+        if (length < thresDistance) {
             m_rectCornerSelectResult.isSelect = true;
             m_rectCornerSelectResult.corner = 1;
             m_rectCornerSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -482,7 +476,7 @@ void LabelCollector::getRectCornerResult(QPointF pt)
         // bottomRight
         tmp = (*it)->rect.bottomRight() - pt;
         length = std::sqrt(std::pow(tmp.x(), 2) + std::pow(tmp.y(), 2));
-        if(length < thresDistance){
+        if (length < thresDistance) {
             m_rectCornerSelectResult.isSelect = true;
             m_rectCornerSelectResult.corner = 2;
             m_rectCornerSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -491,7 +485,7 @@ void LabelCollector::getRectCornerResult(QPointF pt)
         // bottomLeft
         tmp = (*it)->rect.bottomLeft() - pt;
         length = std::sqrt(std::pow(tmp.x(), 2) + std::pow(tmp.y(), 2));
-        if(length < thresDistance){
+        if (length < thresDistance) {
             m_rectCornerSelectResult.isSelect = true;
             m_rectCornerSelectResult.corner = 3;
             m_rectCornerSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -505,12 +499,12 @@ void LabelCollector::getRectEdgeResult(QPointF currentPos)
     RectEdgeSelectResult res;
     m_rectEdgeSelectResult = res;
     QVector<LabelData*>::iterator it;
-    for(it=m_dataVec.begin(); it!=m_dataVec.end(); it++){
+    for (it=m_dataVec.begin(); it!=m_dataVec.end(); it++) {
         double length = 0.0;
         // left
         length = distanceBetweenPointAndLine((*it)->rect.bottomLeft(),(*it)->rect.topLeft(),currentPos);
-        if(length < thresDistance){
-            if((*it)->rect.bottom() > currentPos.y() && currentPos.y() > (*it)->rect.top()){
+        if (length < thresDistance) {
+            if ((*it)->rect.bottom() > currentPos.y() && currentPos.y() > (*it)->rect.top()) {
                 m_rectEdgeSelectResult.isSelect = true;
                 m_rectEdgeSelectResult.line = 0;
                 m_rectEdgeSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -520,8 +514,8 @@ void LabelCollector::getRectEdgeResult(QPointF currentPos)
 
         // top
         length = distanceBetweenPointAndLine((*it)->rect.topLeft(),(*it)->rect.topRight(),currentPos);
-        if(length < thresDistance){
-            if((*it)->rect.left() < currentPos.x() && currentPos.x() < (*it)->rect.right()){
+        if (length < thresDistance){
+            if ((*it)->rect.left() < currentPos.x() && currentPos.x() < (*it)->rect.right()) {
                 m_rectEdgeSelectResult.isSelect = true;
                 m_rectEdgeSelectResult.line = 1;
                 m_rectEdgeSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -531,8 +525,8 @@ void LabelCollector::getRectEdgeResult(QPointF currentPos)
 
         // right
         length = distanceBetweenPointAndLine((*it)->rect.topRight(),(*it)->rect.bottomRight(),currentPos);
-        if(length < thresDistance){
-            if((*it)->rect.bottom() > currentPos.y() && currentPos.y() > (*it)->rect.top()){
+        if (length < thresDistance) {
+            if ((*it)->rect.bottom() > currentPos.y() && currentPos.y() > (*it)->rect.top()) {
                 m_rectEdgeSelectResult.isSelect = true;
                 m_rectEdgeSelectResult.line = 2;
                 m_rectEdgeSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -542,8 +536,8 @@ void LabelCollector::getRectEdgeResult(QPointF currentPos)
 
         // bottom
         length = distanceBetweenPointAndLine((*it)->rect.bottomLeft(),(*it)->rect.bottomRight(),currentPos);
-        if(length < thresDistance){
-            if((*it)->rect.left() < currentPos.x() && currentPos.x() < (*it)->rect.right()){
+        if (length < thresDistance){
+            if ((*it)->rect.left() < currentPos.x() && currentPos.x() < (*it)->rect.right()) {
                 m_rectEdgeSelectResult.isSelect = true;
                 m_rectEdgeSelectResult.line = 3;
                 m_rectEdgeSelectResult.boxIdx = std::distance(m_dataVec.begin(),it);
@@ -555,7 +549,8 @@ void LabelCollector::getRectEdgeResult(QPointF currentPos)
 
 void LabelCollector::appendData(QRectF rect)
 {
-    if(!(qAbs(rect.width())>2 && qAbs(rect.height())>2)) return;
+    if (!(qAbs(rect.width())>2 && qAbs(rect.height())>2))
+        return;
     emit preItemAppended();
     LabelData *tmp = new LabelData(rect);
     m_dataVec.push_back(tmp);
@@ -564,7 +559,8 @@ void LabelCollector::appendData(QRectF rect)
 
 void LabelCollector::appendData(QRectF rect, QString labelClass)
 {
-    if(!(qAbs(rect.width())>2 && qAbs(rect.height())>2)) return;
+    if (!(qAbs(rect.width())>2 && qAbs(rect.height())>2))
+        return;
     emit preItemAppended();
     LabelData *tmp = new LabelData(rect, labelClass);
     m_dataVec.push_back(tmp);
@@ -591,8 +587,10 @@ void LabelCollector::setFileIdx(int fileIdx)
 {
     if (m_fileIdx == fileIdx)
         return;
-    if(fileIdx < 0) return;
-    if(fileIdx >= m_fileInfoList.count()) return;
+    if (fileIdx < 0)
+        return;
+    if (fileIdx >= m_fileInfoList.count())
+        return;
     m_fileIdx = fileIdx;
     emit fileIdxChanged(m_fileIdx);
     setImgSrc(m_fileInfoList.at(m_fileIdx).absoluteFilePath());

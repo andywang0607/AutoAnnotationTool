@@ -30,13 +30,13 @@ public:
 
     virtual QHash<int, QByteArray> roleNames() const override;
 
-    LabelCollector * item() const;
+    LabelCollector *item() const;
 
 public slots:
-    void setItem(LabelCollector * item);
+    void setItem(LabelCollector *item);
 
 private:
-    LabelCollector * m_item;
+    LabelCollector *m_item;
 };
 
 #endif // LABELDATAMODEL_H
