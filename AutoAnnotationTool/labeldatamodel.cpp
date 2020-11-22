@@ -23,10 +23,8 @@ QVariant LabelDataModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case LabelClass:
-        qDebug()<< "item.labelClass"<<m_item->dataVec().at(index.row())->labelClass;
         return QVariant(m_item->dataVec().at(index.row())->labelClass);
     case IsSelect:
-        qDebug()<< "item.isSelect"<<m_item->dataVec().at(index.row())->isSelect;
         return QVariant(m_item->dataVec().at(index.row())->isSelect);
     default:
         break;
