@@ -10,18 +10,18 @@
 
 #include "opencv2/core.hpp"
 
-class CVModule
+class CvModule
 {
 public:
-    CVModule();
-    void GetCroppedImg(QRectF rect, qreal factor);
-    void GetContour(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CVParam *param);
-    void GetOriginImg(QString imgSrc);
+    CvModule();
+    void getCroppedImg(QRectF rect, qreal factor);
+    void getPoly(QVector<LabelData*> &dataVec, int labelIdx, qreal factor, CvParam *param);
+    void getOriginImg(QString imgSrc);
 private:
-    cv::Rect GetROIRect(QRectF rect, qreal factor);
-    void SetContours(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor);
+    cv::Rect getRoiRect(QRectF rect, qreal factor);
+    void setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor);
 private:
-    cv::Mat m_imgOri;
+    cv::Mat m_originImg;
 };
 
 #endif // CVMODULE_H

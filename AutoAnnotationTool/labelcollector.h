@@ -30,18 +30,18 @@ class LabelCollector : public QQuickPaintedItem
     Q_PROPERTY(QImage image READ image WRITE setImage NOTIFY imageChanged)
     Q_PROPERTY(QString imgSrc READ imgSrc WRITE setImgSrc NOTIFY imgSrcChanged)
     Q_PROPERTY(int fileIdx READ fileIdx WRITE setFileIdx NOTIFY fileIdxChanged)
-    Q_PROPERTY(CVParam* cvParam READ cvParam WRITE setCvParam NOTIFY cvParamChanged)
+    Q_PROPERTY(CvParam* cvParam READ cvParam WRITE setCvParam NOTIFY cvParamChanged)
 
 public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
     void paint(QPainter *painter);
 public:
-    Q_INVOKABLE void RemoveLabel(int idx);
+    Q_INVOKABLE void removeLabel(int idx);
 private:
-    bool GetExistLabel(QPointF pt);
-    void RemoveAllLabel();
-    double DistanceBetween2Point(QPointF p1, QPointF p2);
-    double DistanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
+    bool getExistLabel(QPointF pt);
+    void removeAllLabel();
+    double distanceBetweenPoints(QPointF p1, QPointF p2);
+    double distanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
 public:
     QImage image() const;
     QString imgSrc() const;
@@ -50,16 +50,16 @@ public:
     qreal getFactorScaled() const;
     int fileIdx() const;
 
-    CVParam *cvParam() const;
+    CvParam *cvParam() const;
 
 private:
     QImage m_image;
-    QImage m_imageScaled;
-    qreal factorScaled;
-    int imageWidth;
-    int imageHeight;
+    QImage m_scaledImg;
+    qreal m_scaledRatio;
+    int m_imgWidth;
+    int m_imgHeight;
     QString m_imgSrc;
-    QFileInfoList fileInfoList;
+    QFileInfoList m_fileInfoList;
 public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
@@ -71,7 +71,7 @@ public slots:
 
     void setFileIdx(int fileIdx);
 
-    void setCvParam(CVParam* cvParam);
+    void setCvParam(CvParam* cvParam);
 
 signals:
     void imageChanged();
@@ -90,7 +90,7 @@ signals:
     void fileIdxChanged(int fileIdx);
 
     //mouse behavior
-    void cvParamChanged(CVParam* cvParam);
+    void cvParamChanged(CvParam* cvParam);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -105,10 +105,10 @@ private:
     QPointF m_currentPoint;
     QPointF m_firstPoint;
 
-    QPen m_penNormal;
-    QPen m_penHighlight;
-    QPen m_penPoint;
-    QPen m_penPoly;
+    QPen m_normalPen;
+    QPen m_highlightPen;
+    QPen m_pointPen;
+    QPen m_polyPen;
     QVector<QPen> m_penVec;
     std::vector<int> m_selectLabelIdx;
 
@@ -118,21 +118,21 @@ private:
     // mouse select related
 private:
     void setCursorIcon();
-    bool RectBoundaryCheck(QRectF rect);
-    void PosBoundaryCheck(QPointF &pos);
-    void CheckRectValid();
-    void GetPolygonSelectResult(QPointF currentPos);
-    void GetRectCornerResult(QPointF currentPos);
-    void GetRectEdgeResult(QPointF currentPos);
-    PolygonSelectResult polySelectResult;
-    RectCornerSelectResult rectCornerSelectResult;
-    RectEdgeSelectResult rectEdgeSelectResult;
+    bool rectBoundaryCheck(QRectF rect);
+    void posBoundaryCheck(QPointF &pos);
+    void isRectValid();
+    void getPolygonSelectResult(QPointF currentPos);
+    void getRectCornerResult(QPointF currentPos);
+    void getRectEdgeResult(QPointF currentPos);
+    PolygonSelectResult m_polySelectResult;
+    RectCornerSelectResult m_rectCornerSelectResult;
+    RectEdgeSelectResult m_rectEdgeSelectResult;
 private:
-    std::unique_ptr<CVModule> cvModule;
-    QFuture<void> future;
-    QFutureWatcher<void> watcher;
+    std::unique_ptr<CvModule> m_cvModule;
+    QFuture<void> m_future;
+    QFutureWatcher<void> m_watcher;
     int m_fileIdx;
-    CVParam* m_cvParam;
+    CvParam *m_cvParam;
 };
 
 #endif // LABELCOLLECTOR_H

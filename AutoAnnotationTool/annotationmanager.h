@@ -6,31 +6,29 @@
 class AnnotationManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(LabelCollector * labelCollector READ labelCollector WRITE setLabelCollector NOTIFY labelCollectorChanged)
+    Q_PROPERTY(LabelCollector *labelCollector READ labelCollector WRITE setLabelCollector NOTIFY labelCollectorChanged)
 
 public:
     explicit AnnotationManager(QObject *parent = nullptr);
-    LabelCollector * labelCollector() const;
+    LabelCollector *labelCollector() const;
 public:
-    Q_INVOKABLE void SaveAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
-    Q_INVOKABLE void LoadAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
+    Q_INVOKABLE void saveAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
+    Q_INVOKABLE void loadAnnotation(int mode); //0:all, 1:rectangle, 2:polygon
 private:
-    QString GetSavingPath();
-    QString GetImagePath();
-    QString Base64Encode();
-    int GetImageHeight();
-    int GetImageWidth();
+    QString getSavingPath();
+    QString getImagePath();
+    QString base64Encode();
+    int getImageHeight();
+    int getImageWidth();
 
 public slots:
-    void setLabelCollector(LabelCollector * labelCollector);
+    void setLabelCollector(LabelCollector *labelCollector);
 
 signals:
-    void labelCollectorChanged(LabelCollector * labelCollector);
+    void labelCollectorChanged(LabelCollector *labelCollector);
 
 private:
-    LabelCollector * m_labelCollector;
-
-
+    LabelCollector *m_labelCollector;
 };
 
 #endif // ANNOTATIONMANAGER_H

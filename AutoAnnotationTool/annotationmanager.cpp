@@ -18,7 +18,7 @@ LabelCollector *AnnotationManager::labelCollector() const
     return m_labelCollector;
 }
 
-QString AnnotationManager::GetSavingPath()
+QString AnnotationManager::getSavingPath()
 {
     QString imgSrc = labelCollector()->imgSrc();
     QFileInfo info(imgSrc);
@@ -26,13 +26,13 @@ QString AnnotationManager::GetSavingPath()
     return savingPath;
 }
 
-QString AnnotationManager::GetImagePath()
+QString AnnotationManager::getImagePath()
 {
     QFileInfo info(labelCollector()->imgSrc());
     return info.fileName();
 }
 
-QString AnnotationManager::Base64Encode()
+QString AnnotationManager::base64Encode()
 {
     QByteArray ba;
     QBuffer buf(&ba);
@@ -46,19 +46,19 @@ QString AnnotationManager::Base64Encode()
     return hexed;
 }
 
-int AnnotationManager::GetImageHeight()
+int AnnotationManager::getImageHeight()
 {
     return labelCollector()->image().height();
 }
 
-int AnnotationManager::GetImageWidth()
+int AnnotationManager::getImageWidth()
 {
     return labelCollector()->image().width();
 }
 
-void AnnotationManager::SaveAnnotation(int mode)
+void AnnotationManager::saveAnnotation(int mode)
 {
-    QString savingPath = GetSavingPath();
+    QString savingPath = getSavingPath();
     QFile file(savingPath);
     file.open(QIODevice::WriteOnly);
     QJsonParseError JsonParseError;
@@ -68,16 +68,16 @@ void AnnotationManager::SaveAnnotation(int mode)
     RootObject.insert("version", "0.0.1");
 
     // Get imagePath
-    RootObject.insert("imagePath",GetImagePath());
+    RootObject.insert("imagePath",getImagePath());
 
     // Get imageData
-    RootObject.insert("imageData", Base64Encode());
+    RootObject.insert("imageData", base64Encode());
 
-    // Get imageHeight
-    RootObject.insert("imageHeight", GetImageHeight());
+    // Get m_imgHeight
+    RootObject.insert("m_imgHeight", getImageHeight());
 
-    // Get imageWidth
-    RootObject.insert("imageWidth", GetImageWidth());
+    // Get m_imgWidth
+    RootObject.insert("m_imgWidth", getImageWidth());
 
     // flags
     RootObject.insert("flags",QJsonObject());
@@ -87,9 +87,9 @@ void AnnotationManager::SaveAnnotation(int mode)
     QJsonArray shape;
 
     // rectangle data
-    if(mode == 0 || mode ==1){
-        qreal factorScaled = labelCollector()->getFactorScaled();
-        for(int i =0 ;i<boxNum;++i){
+    if (mode == 0 || mode ==1) {
+        qreal m_scaledRatio = labelCollector()->getFactorScaled();
+        for (int i =0 ;i<boxNum;++i) {
             QJsonObject rectInfo;
             rectInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
             rectInfo.insert("group_id",QJsonValue::Null);
@@ -97,11 +97,11 @@ void AnnotationManager::SaveAnnotation(int mode)
             rectInfo.insert("flags",QJsonObject());
             QJsonArray ptArray;
             QJsonArray tlArray;
-            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().x() * factorScaled);
-            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().y() * factorScaled);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().x() * m_scaledRatio);
+            tlArray.append(labelCollector()->dataVec().at(i)->rect.topLeft().y() * m_scaledRatio);
             QJsonArray brArray;
-            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().x() * factorScaled);
-            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().y() * factorScaled);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().x() * m_scaledRatio);
+            brArray.append(labelCollector()->dataVec().at(i)->rect.bottomRight().y() * m_scaledRatio);
             ptArray.append(tlArray);
             ptArray.append(brArray);
             rectInfo.insert("points",ptArray);
@@ -109,8 +109,8 @@ void AnnotationManager::SaveAnnotation(int mode)
         }
     }
     // polygon data
-    if(mode == 0 || mode ==2){
-        for(int i =0 ;i<boxNum;++i){
+    if (mode == 0 || mode ==2) {
+        for (int i =0 ;i<boxNum;++i) {
             QJsonObject polyInfo;
             polyInfo.insert("flags",QJsonObject());
             polyInfo.insert("label",labelCollector()->dataVec().at(i)->labelClass);
@@ -118,7 +118,7 @@ void AnnotationManager::SaveAnnotation(int mode)
             polyInfo.insert("shape_type","polygon");
             QJsonArray ptArray;
             int ptNum = labelCollector()->dataVec().at(i)->poly.size();
-            for(int j = 0; j<ptNum; ++j){
+            for (int j = 0; j<ptNum; ++j) {
                 QJsonArray curPtArray;
                 curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).x() * labelCollector()->getFactorScaled());
                 curPtArray.append(labelCollector()->dataVec().at(i)->poly.at(j).y() * labelCollector()->getFactorScaled());
@@ -138,11 +138,12 @@ void AnnotationManager::SaveAnnotation(int mode)
     return;
 }
 
-void AnnotationManager::LoadAnnotation(int mode)
+void AnnotationManager::loadAnnotation(int mode)
 {
-    QFileInfo fi(GetSavingPath());
-    if(!fi.exists()) return;
-    QFile file(GetSavingPath());
+    QFileInfo fi(getSavingPath());
+    if (!fi.exists())
+        return;
+    QFile file(getSavingPath());
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonParseError JsonParseError;
     QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);
@@ -157,18 +158,17 @@ void AnnotationManager::LoadAnnotation(int mode)
 
     for (const auto& element : shapeAll) {
         QString label = element.toObject()["label"].toString();
-        if(!labelName.contains(label)) labelName.push_back(label);
+        if (!labelName.contains(label)) labelName.push_back(label);
         QString shapeType = element.toObject()["shape_type"].toString();
         QJsonArray pointArray = element.toObject()["points"].toArray();
-        if(shapeType == "rectangle"){
+        if (shapeType == "rectangle") {
             QPointF tl(pointArray[0].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
                     pointArray[0].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
             QPointF br(pointArray[1].toArray()[0].toDouble() / labelCollector()->getFactorScaled(),
                     pointArray[1].toArray()[1].toDouble() / labelCollector()->getFactorScaled());
             QRectF tmpRect(tl, br);
             labelCollector()->appendData(tmpRect, label);
-        }
-        else if(shapeType == "polygon"){
+        }else if (shapeType == "polygon") {
             QPolygonF tmpPoly;
             for (const auto& point : pointArray) {
                 QJsonArray pointArray = point.toArray();

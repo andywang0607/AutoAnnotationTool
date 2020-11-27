@@ -19,7 +19,7 @@ Page {
                 id: iterationShow
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 60
-                text: CVParam.iteration
+                text: CvParam.iteration
             }
             Slider {
                 id: iterationSlider
@@ -29,7 +29,7 @@ Page {
                 to: 10
                 stepSize :1
                 onValueChanged: {
-                    CVParam.iteration = value
+                    CvParam.iteration = value
                 }
             }
         }
@@ -43,7 +43,7 @@ Page {
                 id: epsilonShow
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 60
-                text: CVParam.epsilon
+                text: CvParam.epsilon
             }
             Slider {
                 id: epsilonLabelSlider
@@ -53,7 +53,7 @@ Page {
                 to: 10
                 stepSize :0.01
                 onValueChanged: {
-                    CVParam.epsilon = value.toFixed(2)
+                    CvParam.epsilon = value.toFixed(2)
                 }
             }
         }
