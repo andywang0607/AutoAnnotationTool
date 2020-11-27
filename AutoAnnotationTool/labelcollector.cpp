@@ -33,7 +33,8 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
 }
 
-void LabelCollector::paint(QPainter *painter){
+void LabelCollector::paint(QPainter *painter)
+{
     if (!this->m_scaledImg.isNull()) {
         QRect rect(m_scaledImg.rect());
         painter->drawImage(rect.topLeft(), m_scaledImg);

@@ -65,7 +65,8 @@ void CvModule::getPoly(QVector<LabelData *> &dataVec, int labelIdx, qreal factor
     qDebug()<< Q_FUNC_INFO << "end";
 }
 
-void CvModule::setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor){
+void CvModule::setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<cv::Point> &contoursPoly, qreal factor)
+{
     qDebug()<< Q_FUNC_INFO << "start";
     QPolygon tmpPoly;
 
@@ -78,11 +79,13 @@ void CvModule::setPoly(QVector<LabelData*> &dataVec, int labelIdx, std::vector<c
     qDebug()<< Q_FUNC_INFO << "end";
 }
 
-void CvModule::getOriginImg(QString imgSrc){
+void CvModule::getOriginImg(QString imgSrc)
+{
     m_originImg = cv::imread(imgSrc.toStdString(),1);
 }
 
-cv::Rect CvModule::getRoiRect(QRectF rect, qreal factor){
+cv::Rect CvModule::getRoiRect(QRectF rect, qreal factor)
+{
     QRectF rectOri(rect.topLeft() * factor,
                    rect.bottomRight() * factor);
     return OpencvTypeConverter::qrect2CvRect(rectOri);

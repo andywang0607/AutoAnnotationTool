@@ -1,7 +1,8 @@
 #ifndef MOUSESELECTRESULT_H
 #define MOUSESELECTRESULT_H
 
-struct PolygonSelectResult{
+struct PolygonSelectResult
+{
     PolygonSelectResult():
         isSelect(false),boxIdx(-1),polyIdx(-1){}
     bool isSelect;
@@ -9,7 +10,8 @@ struct PolygonSelectResult{
     int polyIdx; // The index of polygon
 };
 
-struct RectCornerSelectResult{
+struct RectCornerSelectResult
+{
     RectCornerSelectResult():
         isSelect(false),boxIdx(-1),corner(-1){}
     bool isSelect;
@@ -17,7 +19,8 @@ struct RectCornerSelectResult{
     int corner; // 0:topLeft, 1:topRight, 2:bottomRight, 3:bottomLeft
 };
 
-struct RectEdgeSelectResult{
+struct RectEdgeSelectResult
+{
     RectEdgeSelectResult():
         isSelect(false),boxIdx(-1),line(-1){}
     bool isSelect;

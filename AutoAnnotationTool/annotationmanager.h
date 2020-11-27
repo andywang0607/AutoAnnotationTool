@@ -29,8 +29,6 @@ signals:
 
 private:
     LabelCollector *m_labelCollector;
-
-
 };
 
 #endif // ANNOTATIONMANAGER_H
