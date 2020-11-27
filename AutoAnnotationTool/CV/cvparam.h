@@ -13,16 +13,13 @@ public:
     explicit CvParam(QObject *parent = nullptr);
 
     int iteration() const;
-
     qreal epsilon() const;
 
 public slots:
     void setIteration(int iteration);
-
     void setEpsilon(qreal epsilon);
 
 signals:
-
     void iterationChanged(int iteration);
     void epsilonChanged(qreal epsilon);
 
