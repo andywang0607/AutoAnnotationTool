@@ -41,7 +41,7 @@ Window {
                 onClicked: {
                     folderDialog.open()
                 }
-            }      
+            }
             Button{
                 id:nextButton
                 Layout.fillHeight: true
@@ -134,22 +134,39 @@ Window {
                     RowLayout{
                         anchors.fill: parent
                         anchors.margins: 10
-                        TextField {
-                            id: classInput
-                            Layout.preferredWidth: 100
+                        Label {
+                            id:label
+                            Layout.preferredWidth: 40
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            placeholderText: qsTr("Class")
+                            text: labelClass
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            background: Rectangle {
+                                border.color: "black"
+                                border.width: 1
+                            }
+                        }
+                        TextField {
+                            id: classInput
+                            Layout.preferredWidth: 85
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            placeholderText: qsTr("Edit Class")
                             horizontalAlignment : TextInput.AlignHCenter
                             onEditingFinished:{
                                 labelClass = text
+                                label.text = text
                                 classInput.cursorVisible = false
                                 classInput.focus = false
                             }
+                            onFocusChanged: {
+                                if(!focus)
+                                    text = ""
+                            }
                         }
-
                         Button{
-                            Layout.preferredWidth: 50
+                            Layout.preferredWidth: 40
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             text: "Remove"
