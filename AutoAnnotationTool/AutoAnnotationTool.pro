@@ -19,6 +19,7 @@ SOURCES += \
         CV/cvmodule.cpp \
         CV/cvparam.cpp \
         annotationmanager.cpp \
+        geometrymodule.cpp \
         labelcollector.cpp \
         labeldatamodel.cpp \
         main.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     CV/cvmodule.h \
     CV/cvparam.h \
     annotationmanager.h \
+    geometrymodule.h \
     labelcollector.h \
     labeldata.h \
     labeldatamodel.h \
