@@ -82,6 +82,125 @@ void LabelCollector::paint(QPainter *painter)
     }
 }
 
+void LabelCollector::mousePressEvent(QMouseEvent *event)
+{
+    m_mouseMoved = false;
+    if (!(event->button() & acceptedMouseButtons())){
+        QQuickPaintedItem::mousePressEvent(event);
+        return;
+    }
+    if (m_scaledImg.isNull())
+        return;
+    getExistLabel(event->localPos());
+    if (Qt::LeftButton == event->button()) {
+        m_mousePressed = true;
+        GeometryModule::getPolygonSelectResult(event->localPos(), m_dataVec, m_polySelectResult);
+        GeometryModule::getRectCornerResult(event->localPos(), m_dataVec, m_rectCornerSelectResult);
+        GeometryModule::getRectEdgeResult(event->localPos(), m_dataVec, m_rectEdgeSelectResult);
+        m_firstPoint = event->localPos();
+        m_lastPoint = m_firstPoint;
+        m_currentPoint = m_firstPoint;
+        setCursorIcon();
+        event->setAccepted(true);
+    }
+    if (Qt::RightButton == event->button()) {
+        if(m_selectLabelIdx.empty())
+            return;
+        menu.exec(QCursor::pos());
+    }
+}
+
+void LabelCollector::mouseMoveEvent(QMouseEvent *event)
+{
+    if (!m_mouseEnabled || !m_mousePressed) {
+        QQuickPaintedItem::mousePressEvent(event);
+        return;
+    }
+    if (Qt::RightButton == event->button())
+        return;
+    m_lastPoint = event->localPos();
+    GeometryModule::posBoundaryCheck(m_lastPoint, m_scaledImg.width(), m_scaledImg.height());
+    if (m_polySelectResult.isSelect) {
+        m_dataVec.at(m_polySelectResult.boxIdx)->poly[m_polySelectResult.polyIdx] = m_lastPoint;
+    } else if (!m_polySelectResult.isSelect && m_rectCornerSelectResult.isSelect) {
+        switch (m_rectCornerSelectResult.corner) {
+        case 0:
+            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setTopLeft(m_lastPoint);
+            break;
+        case 1:
+            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setTopRight(m_lastPoint);
+            break;
+        case 2:
+            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setBottomRight(m_lastPoint);
+            break;
+        case 3:
+            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setBottomLeft(m_lastPoint);
+            break;
+        default:
+            break;
+        }
+    } else if (!m_polySelectResult.isSelect && !m_rectCornerSelectResult.isSelect && m_rectEdgeSelectResult.isSelect) {
+        switch (m_rectEdgeSelectResult.line){
+        case 0:
+            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setLeft(m_lastPoint.x());
+            break;
+        case 1:
+            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setTop(m_lastPoint.y());
+            break;
+        case 2:
+            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setRight(m_lastPoint.x());
+            break;
+        case 3:
+            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setBottom(m_lastPoint.y());
+            break;
+        default:
+            break;
+        }
+    } else if (!m_selectLabelIdx.empty()) {
+        QPointF offset = m_lastPoint - m_currentPoint;
+        m_currentPoint = m_lastPoint;
+        for(auto const &idx : m_selectLabelIdx){
+            m_dataVec.at(idx)->rect.translate(offset);
+            if (!GeometryModule::rectBoundaryCheck(m_dataVec.at(idx)->rect, m_scaledImg.width(), m_scaledImg.height()))
+                m_dataVec.at(idx)->rect.translate(-offset);
+        }
+    } else {
+        m_mouseMoved = true;
+        m_lastPoint = event->localPos();
+    }
+    update();
+}
+
+void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (!m_mouseEnabled || !(event->button() & acceptedMouseButtons())) {
+        QQuickPaintedItem::mousePressEvent(event);
+        return;
+    }
+    setCursor(QCursor(Qt::ArrowCursor));
+    if (Qt::RightButton == event->button())
+        return;
+    m_mousePressed = false;
+    m_mouseMoved = false;
+    GeometryModule::preventInvalidRect(m_dataVec, m_rectCornerSelectResult, m_rectEdgeSelectResult);
+    if (m_polySelectResult.isSelect) {
+        PolygonSelectResult defaultResult;
+        m_polySelectResult = defaultResult;
+        update();
+        return;
+    }
+    if (m_polySelectResult.isSelect || m_rectEdgeSelectResult.isSelect || m_rectCornerSelectResult.isSelect)
+        return;
+    if (!m_selectLabelIdx.empty())
+        return;
+    if (m_firstPoint != m_lastPoint){
+        QPoint point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
+        QPoint point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
+        appendData(QRectF(point_lt,point_rb));
+        update();
+    }
+}
+
 void LabelCollector::removeLabel(int idx)
 {
     emit preItemRemoved(idx);
@@ -203,125 +322,6 @@ void LabelCollector::setImgSrc(QString imgSrc)
     }
     emit imgSrcChanged(m_imgSrc);
     m_cvModule->getOriginImg(m_imgSrc);
-}
-
-void LabelCollector::mousePressEvent(QMouseEvent *event)
-{
-    m_mouseMoved = false;
-    if (!(event->button() & acceptedMouseButtons())){
-        QQuickPaintedItem::mousePressEvent(event);
-        return;
-    }
-    if (m_scaledImg.isNull())
-        return;
-    getExistLabel(event->localPos());
-    if (Qt::LeftButton == event->button()) {
-        m_mousePressed = true;
-        GeometryModule::getPolygonSelectResult(event->localPos(), m_dataVec, m_polySelectResult);
-        GeometryModule::getRectCornerResult(event->localPos(), m_dataVec, m_rectCornerSelectResult);
-        GeometryModule::getRectEdgeResult(event->localPos(), m_dataVec, m_rectEdgeSelectResult);
-        m_firstPoint = event->localPos();
-        m_lastPoint = m_firstPoint;
-        m_currentPoint = m_firstPoint;
-        setCursorIcon();
-        event->setAccepted(true);
-    }
-    if (Qt::RightButton == event->button()) {
-        if(m_selectLabelIdx.empty())
-            return;
-        menu.exec(QCursor::pos());
-    }
-}
-
-void LabelCollector::mouseMoveEvent(QMouseEvent *event)
-{
-    if (!m_mouseEnabled || !m_mousePressed) {
-        QQuickPaintedItem::mousePressEvent(event);
-        return;
-    }
-    if (Qt::RightButton == event->button())
-        return;
-    m_lastPoint = event->localPos();
-    GeometryModule::posBoundaryCheck(m_lastPoint, m_scaledImg.width(), m_scaledImg.height());
-    if (m_polySelectResult.isSelect) {
-        m_dataVec.at(m_polySelectResult.boxIdx)->poly[m_polySelectResult.polyIdx] = m_lastPoint;
-    } else if (!m_polySelectResult.isSelect && m_rectCornerSelectResult.isSelect) {
-        switch (m_rectCornerSelectResult.corner) {
-        case 0:
-            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setTopLeft(m_lastPoint);
-            break;
-        case 1:
-            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setTopRight(m_lastPoint);
-            break;
-        case 2:
-            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setBottomRight(m_lastPoint);
-            break;
-        case 3:
-            m_dataVec.at(m_rectCornerSelectResult.boxIdx)->rect.setBottomLeft(m_lastPoint);
-            break;
-        default:
-            break;
-        }
-    } else if (!m_polySelectResult.isSelect && !m_rectCornerSelectResult.isSelect && m_rectEdgeSelectResult.isSelect) {
-        switch (m_rectEdgeSelectResult.line){
-        case 0:
-            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setLeft(m_lastPoint.x());
-            break;
-        case 1:
-            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setTop(m_lastPoint.y());
-            break;
-        case 2:
-            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setRight(m_lastPoint.x());
-            break;
-        case 3:
-            m_dataVec.at(m_rectEdgeSelectResult.boxIdx)->rect.setBottom(m_lastPoint.y());
-            break;
-        default:
-            break;
-        }
-    } else if (!m_selectLabelIdx.empty()) {
-        QPointF offset = m_lastPoint - m_currentPoint;
-        m_currentPoint = m_lastPoint;
-        for(auto const &idx : m_selectLabelIdx){
-            m_dataVec.at(idx)->rect.translate(offset);
-            if (!GeometryModule::rectBoundaryCheck(m_dataVec.at(idx)->rect, m_scaledImg.width(), m_scaledImg.height()))
-                m_dataVec.at(idx)->rect.translate(-offset);
-        }
-    } else {
-        m_mouseMoved = true;
-        m_lastPoint = event->localPos();
-    }
-    update();
-}
-
-void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (!m_mouseEnabled || !(event->button() & acceptedMouseButtons())) {
-        QQuickPaintedItem::mousePressEvent(event);
-        return;
-    }
-    setCursor(QCursor(Qt::ArrowCursor));
-    if (Qt::RightButton == event->button())
-        return;
-    m_mousePressed = false;
-    m_mouseMoved = false;
-    GeometryModule::preventInvalidRect(m_dataVec, m_rectCornerSelectResult, m_rectEdgeSelectResult);
-    if (m_polySelectResult.isSelect) {
-        PolygonSelectResult defaultResult;
-        m_polySelectResult = defaultResult;
-        update();
-        return;
-    }
-    if (m_polySelectResult.isSelect || m_rectEdgeSelectResult.isSelect || m_rectCornerSelectResult.isSelect)
-        return;
-    if (!m_selectLabelIdx.empty())
-        return;
-    if (m_firstPoint != m_lastPoint){
-        QPoint point_lt(qMin(m_firstPoint.x(),m_lastPoint.x()),qMin(m_firstPoint.y(),m_lastPoint.y()));
-        QPoint point_rb(qMax(m_firstPoint.x(),m_lastPoint.x()),qMax(m_firstPoint.y(),m_lastPoint.y()));
-        appendData(QRectF(point_lt,point_rb));
-        update();
-    }
 }
 
 void LabelCollector::setCursorIcon()

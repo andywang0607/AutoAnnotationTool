@@ -34,66 +34,72 @@ class LabelCollector : public QQuickPaintedItem
 
 public:
     explicit LabelCollector(QQuickItem *parent = nullptr);
-    void paint(QPainter *painter);
+    void paint(QPainter *painter) override;
+
+    // mouse related event
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
+    // Function exposed to QML
 public:
     Q_INVOKABLE void removeLabel(int idx);
-private:
-    bool getExistLabel(QPointF pt);
-    void removeAllLabel();
+
+    // public get function
 public:
     QImage image() const;
     QString imgSrc() const;
+    int fileIdx() const;
+    CvParam *cvParam() const;
+
     QVector<LabelData*> dataVec() const;
     bool setItemAt(int index, LabelData *item);
     qreal getFactorScaled() const;
-    int fileIdx() const;
-
-    CvParam *cvParam() const;
 
 private:
     QImage m_image;
     QImage m_scaledImg;
     qreal m_scaledRatio;
+    int m_fileIdx;
     int m_imgWidth;
     int m_imgHeight;
     QString m_imgSrc;
     QFileInfoList m_fileInfoList;
+    CvParam *m_cvParam;
+
 public slots:
     void setImage(const QImage &image);
     void setImgSrc(QString imgSrc);
+    void setFileIdx(int fileIdx);
+    void setCvParam(CvParam* cvParam);
+
 public slots:
     void appendData(QRectF rect);
     void appendData(QRectF rect, QString labelClass);
     void appendData(QPolygonF poly, QString labelClass);
     void appendData(QRectF rect, QPolygonF poly, QString labelClass);
 
-    void setFileIdx(int fileIdx);
-
-    void setCvParam(CvParam* cvParam);
-
+    // signal from Q_PROPERTY
 signals:
     void imageChanged();
     void imgSrcChanged(QString imgSrc);
+    void fileIdxChanged(int fileIdx);
+    void cvParamChanged(CvParam* cvParam);
 
     // Model related signal
 signals:
     void preItemAppended();
     void postItemAppended();
-
     void preItemRemoved(int index);
     void postItemRemoved();
-
     void onModelChanged();
 
-    void fileIdxChanged(int fileIdx);
+private:
+    bool getExistLabel(QPointF pt);
+    void removeAllLabel();
+    void setCursorIcon();
 
-    //mouse behavior
-    void cvParamChanged(CvParam* cvParam);
-
-protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
 private:
     bool m_mouseEnabled;
     bool m_mousePressed;
@@ -108,23 +114,20 @@ private:
     QPen m_pointPen;
     QPen m_polyPen;
     QVector<QPen> m_penVec;
-    std::vector<int> m_selectLabelIdx;
+
+    QVector<LabelData*> m_dataVec;
 
     QMenu menu;
-private:
-    QVector<LabelData*> m_dataVec;
-    // mouse select related
-private:
-    void setCursorIcon();
+
     PolygonSelectResult m_polySelectResult;
     RectCornerSelectResult m_rectCornerSelectResult;
     RectEdgeSelectResult m_rectEdgeSelectResult;
-private:
+
     std::unique_ptr<CvModule> m_cvModule;
     QFuture<void> m_future;
     QFutureWatcher<void> m_watcher;
-    int m_fileIdx;
-    CvParam *m_cvParam;
+
+    std::vector<int> m_selectLabelIdx;
 };
 
 #endif // LABELCOLLECTOR_H
