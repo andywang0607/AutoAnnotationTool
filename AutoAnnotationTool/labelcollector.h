@@ -40,8 +40,6 @@ public:
 private:
     bool getExistLabel(QPointF pt);
     void removeAllLabel();
-    double distanceBetweenPoints(QPointF p1, QPointF p2);
-    double distanceBetweenPointAndLine(QPointF lineStart, QPointF lineEnd, QPointF point);
 public:
     QImage image() const;
     QString imgSrc() const;
@@ -118,12 +116,6 @@ private:
     // mouse select related
 private:
     void setCursorIcon();
-    bool rectBoundaryCheck(QRectF rect);
-    void posBoundaryCheck(QPointF &pos);
-    void isRectValid();
-    void getPolygonSelectResult(QPointF currentPos);
-    void getRectCornerResult(QPointF currentPos);
-    void getRectEdgeResult(QPointF currentPos);
     PolygonSelectResult m_polySelectResult;
     RectCornerSelectResult m_rectCornerSelectResult;
     RectEdgeSelectResult m_rectEdgeSelectResult;
