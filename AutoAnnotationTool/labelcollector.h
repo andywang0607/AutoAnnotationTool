@@ -8,8 +8,6 @@
 #include <QImage>
 #include <QVector>
 #include <QPointF>
-#include <QLineF>
-#include <QPolygon>
 #include <QPen>
 #include <QMenu>
 #include <QAction>
