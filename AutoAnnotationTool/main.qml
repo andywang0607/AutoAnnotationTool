@@ -21,11 +21,20 @@ ApplicationWindow {
 
     header: ToolBar{
         id: toolBar
-        ToolButton{
-            icon.source: drawer.opened ? "qrc:/icon/round_menu_open_black_18dp.png" :
-                                         "qrc:/icon/round_menu_black_18dp.png"
-            onClicked: {
-                (drawer.position==1) ? drawer.close() : drawer.open()
+        RowLayout{
+            ToolButton{
+                icon.source: drawer.opened ? "qrc:/icon/round_menu_open_black_18dp.png" :
+                                             "qrc:/icon/round_menu_black_18dp.png"
+                onClicked: {
+                    (drawer.position==1) ? drawer.close() : drawer.open()
+                }
+            }
+            ToolButton{
+                visible: !(labelCollector.imgSrc == "")
+                icon.source: "qrc:/icon/round_save_black_18dp.png"
+                onClicked: {
+                    dataSaver.saveAnnotation(0)
+                }
             }
         }
     }
@@ -80,15 +89,6 @@ ApplicationWindow {
                 text: qsTr("Open Folder")
                 onClicked: {
                     folderDialog.open()
-                }
-            }
-            Button{
-                id:saveFileButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Save File")
-                onClicked: {
-                    dataSaver.saveAnnotation(0)
                 }
             }
             Button{
