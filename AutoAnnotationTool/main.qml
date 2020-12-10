@@ -3,6 +3,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.2
 import QtQuick.Window 2.14
+import QtQuick.Controls.Material 2.12
 
 import LabelCollector 1.0
 import LabelDataModel 1.0
@@ -10,20 +11,35 @@ import AnnotationManager 1.0
 
 import "Setting"
 
-Window {
+ApplicationWindow {
     visible: true
     width: 870
-    height: 360
+    height: 560
     title: qsTr("Auto Annotation Tool")
-    RowLayout{
-        anchors.fill: parent
+    Material.theme: Material.Dark
+    Material.primary: Material.BlueGrey
+
+    header: ToolBar{
+        id: toolBar
+        ToolButton{
+            icon.source: drawer.opened ? "qrc:/icon/round_menu_open_black_18dp.png" :
+                                         "qrc:/icon/round_menu_black_18dp.png"
+            onClicked: {
+                (drawer.position==1) ? drawer.close() : drawer.open()
+            }
+        }
+    }
+
+    Drawer{
+        id: drawer
+        width: 300
+        height: parent.height - toolBar.height
+        y: header.height
+        dragMargin: 0
         ColumnLayout{
             id: buttonCollumn
-            Layout.alignment: Qt.AlignLeft
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.preferredWidth: 120
-            Layout.maximumWidth: 120
+            anchors.fill: parent
+            spacing: 0
             Button{
                 id:openFileButton
                 Layout.fillHeight: true
@@ -79,6 +95,11 @@ Window {
                 }
             }
         }
+    }
+
+    RowLayout{
+        anchors.fill: parent
+
         LabelCollector{
             id:labelCollector
             Layout.alignment: Qt.AlignLeft
