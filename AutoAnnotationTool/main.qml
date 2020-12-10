@@ -30,6 +30,30 @@ ApplicationWindow {
         }
     }
 
+    footer: RowLayout{
+        width: parent.width
+        height: 34
+        Button {
+            Layout.preferredWidth: parent.height
+            Layout.fillHeight: true
+            icon.source: "qrc:/icon/round_chevron_left_black_18dp.png"
+            onClicked: {
+                labelCollector.fileIdx--
+            }
+        }
+        Item{
+            Layout.fillWidth: true
+        }
+        Button {
+            Layout.preferredWidth: parent.height
+            Layout.fillHeight: true
+            icon.source: "qrc:/icon/round_chevron_right_black_18dp.png"
+            onClicked: {
+                labelCollector.fileIdx++
+            }
+        }
+    }
+
     Drawer{
         id: drawer
         width: 300
@@ -56,24 +80,6 @@ ApplicationWindow {
                 text: qsTr("Open Folder")
                 onClicked: {
                     folderDialog.open()
-                }
-            }
-            Button{
-                id:nextButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Next Image")
-                onClicked: {
-                    labelCollector.fileIdx++
-                }
-            }
-            Button{
-                id:lastButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Last Image")
-                onClicked: {
-                    labelCollector.fileIdx--
                 }
             }
             Button{
