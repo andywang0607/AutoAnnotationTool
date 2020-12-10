@@ -214,6 +214,7 @@ ApplicationWindow {
             nameFilters: ["*.jpg", "*.png", "*.bmp"]
             onAccepted: {
                 labelCollector.imgSrc = fileDialog.fileUrl
+                drawer.close()
             }
         }
         FileDialog {
@@ -224,6 +225,7 @@ ApplicationWindow {
             selectMultiple: false
             onAccepted: {
                 labelCollector.imgSrc = folderDialog.fileUrl
+                drawer.close()
             }
         }
         LabelDataModel{
