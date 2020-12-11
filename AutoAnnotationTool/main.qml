@@ -22,6 +22,7 @@ ApplicationWindow {
     header: ToolBar{
         id: toolBar
         RowLayout{
+            anchors.fill: parent
             ToolButton{
                 icon.source: drawer.opened ? "qrc:/icon/round_menu_open_black_18dp.png" :
                                              "qrc:/icon/round_menu_black_18dp.png"
@@ -48,15 +49,18 @@ ApplicationWindow {
                     dataSaver.saveAnnotation(0)
                 }
             }
+            Item { Layout.fillWidth: true }
+            ToolButton{
+                icon.source: "qrc:/icon/round_list_black_18dp.png"
+                onClicked: {
+                    (listViewDrawer.position==1) ? listViewDrawer.close() : listViewDrawer.open()
+                }
+            }
         }
     }
 
     footer: RowLayout{
-        width: parent.width
-        height: 34
         Button {
-            Layout.preferredWidth: parent.height
-            Layout.fillHeight: true
             icon.source: "qrc:/icon/round_chevron_left_black_18dp.png"
             onClicked: {
                 labelCollector.fileIdx--
@@ -66,8 +70,6 @@ ApplicationWindow {
             Layout.fillWidth: true
         }
         Button {
-            Layout.preferredWidth: parent.height
-            Layout.fillHeight: true
             icon.source: "qrc:/icon/round_chevron_right_black_18dp.png"
             onClicked: {
                 labelCollector.fileIdx++
@@ -97,41 +99,37 @@ ApplicationWindow {
         }
     }
 
-    RowLayout{
-        anchors.fill: parent
-
-        LabelCollector{
-            id:labelCollector
-            Layout.alignment: Qt.AlignLeft
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.preferredWidth: 500
-            cvParam: CvParam
-            onWidthChanged: {
-                labelCollector.setImage(labelCollector.image)
-            }
-            onHeightChanged: {
-                labelCollector.setImage(labelCollector.image)
-            }
-            onImageChanged: {
-                dataSaver.loadAnnotation(0)
-            }
+    LabelCollector{
+        id:labelCollector
+        x: 0
+        y: 0
+        width: parent.width
+        height: parent.height
+        cvParam: CvParam
+        onWidthChanged: {
+            labelCollector.setImage(labelCollector.image)
         }
-        Rectangle{
-            id: listRect
-            Layout.alignment: Qt.AlignRight
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.preferredWidth: 270
-            Layout.maximumWidth: 300
-            border.color: "dimgray"
-            border.width: 3
+        onHeightChanged: {
+            labelCollector.setImage(labelCollector.image)
+        }
+        onImageChanged: {
+            dataSaver.loadAnnotation(0)
+        }
+    }
+
+    Drawer{
+        id: listViewDrawer
+        width: 300
+        height: parent.height - toolBar.height
+        y: header.height
+        edge: Qt.RightEdge
+        dragMargin : 30
+        ColumnLayout{
+            anchors.fill: parent
             Label{
                 id: labelListTitle
-                anchors.top: parent.top
-                anchors.topMargin: 3
-                width: parent.width - 6
-                height: 30
+                Layout.fillWidth:  true
+                Layout.preferredHeight: 30
                 text: "Label List"
                 font.pixelSize: 18
                 font.bold: true
@@ -141,11 +139,8 @@ ApplicationWindow {
 
             ListView{
                 id:listView
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: labelListTitle.bottom
-                anchors.topMargin: 3
-                width: parent.width
-                height: parent.height-30-9
+                Layout.fillWidth:  true
+                Layout.fillHeight: true
                 model: labelDataModel
                 clip: true
                 delegate: Rectangle {
@@ -199,38 +194,40 @@ ApplicationWindow {
                 }
             }
         }
-        FileDialog {
-            id: fileDialog
-            title: "Choose label image"
-            selectExisting: true
-            selectFolder: false
-            selectMultiple: false
-            nameFilters: ["*.jpg", "*.png", "*.bmp"]
-            onAccepted: {
-                labelCollector.imgSrc = fileDialog.fileUrl
-                drawer.close()
-            }
-        }
-        FileDialog {
-            id: folderDialog
-            title: "Choose a folder to label"
-            selectExisting: true
-            selectFolder: true
-            selectMultiple: false
-            onAccepted: {
-                labelCollector.imgSrc = folderDialog.fileUrl
-                drawer.close()
-            }
-        }
-        LabelDataModel{
-            id:labelDataModel
-            item: labelCollector
-        }
-        AnnotationManager{
-            id: dataSaver
-            labelCollector: labelCollector
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: "Choose label image"
+        selectExisting: true
+        selectFolder: false
+        selectMultiple: false
+        nameFilters: ["*.jpg", "*.png", "*.bmp"]
+        onAccepted: {
+            labelCollector.imgSrc = fileDialog.fileUrl
+            drawer.close()
         }
     }
+    FileDialog {
+        id: folderDialog
+        title: "Choose a folder to label"
+        selectExisting: true
+        selectFolder: true
+        selectMultiple: false
+        onAccepted: {
+            labelCollector.imgSrc = folderDialog.fileUrl
+            drawer.close()
+        }
+    }
+    LabelDataModel{
+        id:labelDataModel
+        item: labelCollector
+    }
+    AnnotationManager{
+        id: dataSaver
+        labelCollector: labelCollector
+    }
+
     SettingWindow{
         id: settingWindow
     }
