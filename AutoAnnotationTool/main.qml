@@ -30,6 +30,18 @@ ApplicationWindow {
                 }
             }
             ToolButton{
+                icon.source: "qrc:/icon/round_folder_open_black_18dp.png"
+                onClicked: {
+                    folderDialog.open()
+                }
+            }
+            ToolButton{
+                icon.source: "qrc:/icon/round_photo_black_18dp.png"
+                onClicked: {
+                    fileDialog.open()
+                }
+            }
+            ToolButton{
                 visible: !(labelCollector.imgSrc == "")
                 icon.source: "qrc:/icon/round_save_black_18dp.png"
                 onClicked: {
@@ -73,24 +85,6 @@ ApplicationWindow {
             id: buttonCollumn
             anchors.fill: parent
             spacing: 0
-            Button{
-                id:openFileButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Open File")
-                onClicked: {
-                    fileDialog.open()
-                }
-            }
-            Button{
-                id:openFolderButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Open Folder")
-                onClicked: {
-                    folderDialog.open()
-                }
-            }
             Button{
                 id:settingButton
                 Layout.fillHeight: true
