@@ -25,6 +25,14 @@ ApplicationWindow {
         RowLayout{
             anchors.fill: parent
             ToolButton{
+                icon.source: "qrc:/icon/round_arrow_back_black_18dp.png"
+                visible: view.currentIndex!=0
+                onClicked: {
+                    view.setCurrentIndex(0)
+                }
+            }
+            ToolButton{
+                visible: view.currentIndex==0
                 icon.source: drawer.opened ? "qrc:/icon/round_menu_open_black_18dp.png" :
                                              "qrc:/icon/round_menu_black_18dp.png"
                 onClicked: {
@@ -32,19 +40,21 @@ ApplicationWindow {
                 }
             }
             ToolButton{
+                visible: view.currentIndex==0
                 icon.source: "qrc:/icon/round_folder_open_black_18dp.png"
                 onClicked: {
                     folderDialog.open()
                 }
             }
             ToolButton{
+                visible: view.currentIndex==0
                 icon.source: "qrc:/icon/round_photo_black_18dp.png"
                 onClicked: {
                     fileDialog.open()
                 }
             }
             ToolButton{
-                visible: !(labelCollector.imgSrc == "")
+                visible: !(labelCollector.imgSrc == "") && view.currentIndex==0
                 icon.source: "qrc:/icon/round_save_black_18dp.png"
                 onClicked: {
                     dataSaver.saveAnnotation(0)
@@ -61,6 +71,7 @@ ApplicationWindow {
     }
 
     footer: RowLayout{
+        visible: view.currentIndex == 0
         Button {
             icon.source: "qrc:/icon/round_chevron_left_black_18dp.png"
             onClicked: {
@@ -75,6 +86,40 @@ ApplicationWindow {
             onClicked: {
                 labelCollector.fileIdx++
             }
+        }
+    }
+
+    SwipeView {
+        id: view
+        currentIndex: 0
+        anchors.fill: parent
+        interactive : false
+        Page {
+            id: firstPage
+            Label {
+                id: labelPage
+                anchors.fill: parent
+                LabelCollector{
+                    id:labelCollector
+                    x: 0
+                    y: 0
+                    width: parent.width
+                    height: parent.height
+                    cvParam: CvParam
+                    onWidthChanged: {
+                        labelCollector.setImage(labelCollector.image)
+                    }
+                    onHeightChanged: {
+                        labelCollector.setImage(labelCollector.image)
+                    }
+                    onImageChanged: {
+                        dataSaver.loadAnnotation(0)
+                    }
+                }
+            }
+        }
+        CVParamSettingPage {
+            id: settingPage
         }
     }
 
@@ -115,6 +160,10 @@ ApplicationWindow {
                         font.bold: true
                     }
                 }
+                onClicked: {
+                    view.setCurrentIndex(1)
+                    drawer.close()
+                }
             }
             // for edit label class
             FlatButton{
@@ -142,24 +191,6 @@ ApplicationWindow {
                     }
                 }
             }
-        }
-    }
-
-    LabelCollector{
-        id:labelCollector
-        x: 0
-        y: 0
-        width: parent.width
-        height: parent.height
-        cvParam: CvParam
-        onWidthChanged: {
-            labelCollector.setImage(labelCollector.image)
-        }
-        onHeightChanged: {
-            labelCollector.setImage(labelCollector.image)
-        }
-        onImageChanged: {
-            dataSaver.loadAnnotation(0)
         }
     }
 
@@ -267,9 +298,5 @@ ApplicationWindow {
     AnnotationManager{
         id: dataSaver
         labelCollector: labelCollector
-    }
-
-    SettingWindow{
-        id: settingWindow
     }
 }
