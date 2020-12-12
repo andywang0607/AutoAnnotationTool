@@ -15,5 +15,8 @@
         <file>icon/round_save_black_18dp.png</file>
         <file>icon/round_save_black_48dp.png</file>
         <file>icon/round_settings_black_18dp.png</file>
+        <file>materialdesign/FlatButton.qml</file>
+        <file>materialdesign/PaperRipple.qml</file>
+        <file>materialdesign/UIConstants.qml</file>
     </qresource>
 </RCC>
