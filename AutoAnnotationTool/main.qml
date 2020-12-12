@@ -10,6 +10,7 @@ import LabelDataModel 1.0
 import AnnotationManager 1.0
 
 import "Setting"
+import "materialdesign/"
 
 ApplicationWindow {
     visible: true
@@ -84,16 +85,18 @@ ApplicationWindow {
         y: header.height
         dragMargin: 0
         ColumnLayout{
-            anchors.fill: parent
+            anchors.top: parent.top
             anchors.topMargin: 16
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
             spacing: 0
-            Rectangle{
+            // for setting
+            FlatButton{
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: 50
-                Layout.alignment: Qt.AlignTop
-                color: "#696969"
                 RowLayout{
                     anchors.fill: parent
+                    Item{ Layout.preferredWidth: 16}
                     Image {
                         Layout.preferredWidth: 34
                         Layout.preferredHeight: 34
@@ -112,10 +115,30 @@ ApplicationWindow {
                         font.bold: true
                     }
                 }
-                MouseArea{
+            }
+            // for edit label class
+            FlatButton{
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: 50
+                RowLayout{
                     anchors.fill: parent
-                    onClicked: {
-                        settingWindow.show()
+                    Item{ Layout.preferredWidth: 16}
+                    Image {
+                        Layout.preferredWidth: 34
+                        Layout.preferredHeight: 34
+                        source: "qrc:/icon/round_create_black_18dp.png"
+                        asynchronous : true
+                    }
+                    Item{
+                        Layout.fillWidth: true
+                    }
+                    Label{
+                        text: qsTr("Edit label class")
+                        Layout.preferredWidth: 200
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 18
+                        font.bold: true
                     }
                 }
             }
@@ -172,7 +195,8 @@ ApplicationWindow {
                 model: labelDataModel
                 clip: true
                 spacing: 16
-                delegate: Rectangle {
+                delegate: Button {
+                    flat: true
                     height: 50
                     width: parent.width - 6
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -189,33 +213,24 @@ ApplicationWindow {
                             verticalAlignment: Text.AlignVCenter
                             font.pixelSize: 16
                         }
-                        TextField {
-                            id: classInput
-                            Layout.preferredWidth: 85
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            placeholderText: qsTr("Edit Class")
-                            horizontalAlignment : TextInput.AlignHCenter
-                            onEditingFinished:{
-                                labelClass = text
-                                label.text = text
-                                classInput.cursorVisible = false
-                                classInput.focus = false
-                            }
-                            onFocusChanged: {
-                                if(!focus)
-                                    text = ""
-                            }
-                        }
-                        Button{
-                            Layout.preferredWidth: 40
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            text: "Remove"
-                            onClicked: {
-                                labelCollector.removeLabel(index)
-                            }
-                        }
+                        //                        TextField {
+                        //                            id: classInput
+                        //                            Layout.preferredWidth: 85
+                        //                            Layout.fillWidth: true
+                        //                            Layout.fillHeight: true
+                        //                            placeholderText: qsTr("Edit Class")
+                        //                            horizontalAlignment : TextInput.AlignHCenter
+                        //                            onEditingFinished:{
+                        //                                labelClass = text
+                        //                                label.text = text
+                        //                                classInput.cursorVisible = false
+                        //                                classInput.focus = false
+                        //                            }
+                        //                            onFocusChanged: {
+                        //                                if(!focus)
+                        //                                    text = ""
+                        //                            }
+                        //                        }
                     }
                 }
             }
