@@ -84,16 +84,39 @@ ApplicationWindow {
         y: header.height
         dragMargin: 0
         ColumnLayout{
-            id: buttonCollumn
             anchors.fill: parent
+            anchors.topMargin: 16
             spacing: 0
-            Button{
-                id:settingButton
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                text: qsTr("Setting")
-                onClicked: {
-                    settingWindow.show()
+            Rectangle{
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: 50
+                Layout.alignment: Qt.AlignTop
+                color: "#696969"
+                RowLayout{
+                    anchors.fill: parent
+                    Image {
+                        Layout.preferredWidth: 34
+                        Layout.preferredHeight: 34
+                        source: "qrc:/icon/round_settings_black_18dp.png"
+                        asynchronous : true
+                    }
+                    Item{
+                        Layout.fillWidth: true
+                    }
+                    Label{
+                        text: qsTr("Algorighm Setting")
+                        Layout.preferredWidth: 200
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 18
+                        font.bold: true
+                    }
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        settingWindow.show()
+                    }
                 }
             }
         }
@@ -119,30 +142,36 @@ ApplicationWindow {
 
     Drawer{
         id: listViewDrawer
-        width: 300
+        width: 360
         height: parent.height - toolBar.height
         y: header.height
         edge: Qt.RightEdge
         dragMargin : 30
         ColumnLayout{
             anchors.fill: parent
+            Item{
+                height: 16
+            }
             Label{
                 id: labelListTitle
                 Layout.fillWidth:  true
                 Layout.preferredHeight: 30
                 text: "Label List"
-                font.pixelSize: 18
+                font.pixelSize: 20
                 font.bold: true
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
-
+            Item{
+                height: 16
+            }
             ListView{
                 id:listView
                 Layout.fillWidth:  true
                 Layout.fillHeight: true
                 model: labelDataModel
                 clip: true
+                spacing: 16
                 delegate: Rectangle {
                     height: 50
                     width: parent.width - 6
@@ -158,10 +187,7 @@ ApplicationWindow {
                             text: labelClass
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            background: Rectangle {
-                                border.color: "black"
-                                border.width: 1
-                            }
+                            font.pixelSize: 16
                         }
                         TextField {
                             id: classInput
