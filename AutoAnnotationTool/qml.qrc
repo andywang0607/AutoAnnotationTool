@@ -20,5 +20,6 @@
         <file>icon/round_add_circle_black_18dp.png</file>
         <file>icon/round_create_black_18dp.png</file>
         <file>icon/round_arrow_back_black_18dp.png</file>
+        <file>Setting/LabelClassEditPage.qml</file>
     </qresource>
 </RCC>

@@ -121,6 +121,9 @@ ApplicationWindow {
         CVParamSettingPage {
             id: settingPage
         }
+        LabelClassEditPage{
+            id: labelClassEditPage
+        }
     }
 
     Drawer{
@@ -189,6 +192,10 @@ ApplicationWindow {
                         font.pixelSize: 18
                         font.bold: true
                     }
+                }
+                onClicked: {
+                    view.setCurrentIndex(2)
+                    drawer.close()
                 }
             }
         }
