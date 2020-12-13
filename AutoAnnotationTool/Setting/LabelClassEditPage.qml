@@ -3,6 +3,8 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.12
 
+import "../materialdesign/"
+
 Page {
     property alias labelPropertyModel: labelPropertyModel
     ListView{
@@ -21,9 +23,13 @@ Page {
             RowLayout{
                 anchors.fill: parent
                 Layout.alignment: Qt.AlignVCenter
-                Button{
+                FlatButton{
                     Layout.preferredWidth: 34
-                    icon.source: "qrc:/icon/round_delete_black_18dp.png"
+                    Image {
+                        anchors.fill: parent
+                        source: "qrc:/icon/round_delete_black_18dp.png"
+                        asynchronous : true
+                    }
                     onClicked: {
                         labelPropertyModel.remove(index, 1)
                     }

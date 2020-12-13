@@ -1,5 +1,5 @@
 import QtQuick 2.14
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.2
 import QtQuick.Window 2.14
@@ -258,6 +258,18 @@ ApplicationWindow {
                             onActivated: {
                                 label.text = labelClassEditPage.labelPropertyModel.get(currentIndex).labelName
                                 labelClass = labelClassEditPage.labelPropertyModel.get(currentIndex).labelName
+                            }
+                        }
+                        FlatButton{
+                            Layout.preferredWidth: 32
+                            Layout.preferredHeight: 32
+                            Image {
+                                anchors.fill: parent
+                                source: "qrc:/icon/round_delete_black_18dp.png"
+                                fillMode: Image.PreserveAspectFit
+                            }
+                            onClicked: {
+                                labelCollector.removeLabel(index)
                             }
                         }
                     }
