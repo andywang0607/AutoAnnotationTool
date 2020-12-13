@@ -207,7 +207,7 @@ ApplicationWindow {
         height: parent.height - toolBar.height
         y: header.height
         edge: Qt.RightEdge
-        dragMargin : 30
+        dragMargin : 0
         ColumnLayout{
             anchors.fill: parent
             Item{
@@ -245,30 +245,21 @@ ApplicationWindow {
                             id:label
                             Layout.preferredWidth: 40
                             Layout.fillWidth: true
-                            Layout.fillHeight: true
+                            Layout.preferredHeight: 32
                             text: labelClass
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             font.pixelSize: 16
                         }
-                        //                        TextField {
-                        //                            id: classInput
-                        //                            Layout.preferredWidth: 85
-                        //                            Layout.fillWidth: true
-                        //                            Layout.fillHeight: true
-                        //                            placeholderText: qsTr("Edit Class")
-                        //                            horizontalAlignment : TextInput.AlignHCenter
-                        //                            onEditingFinished:{
-                        //                                labelClass = text
-                        //                                label.text = text
-                        //                                classInput.cursorVisible = false
-                        //                                classInput.focus = false
-                        //                            }
-                        //                            onFocusChanged: {
-                        //                                if(!focus)
-                        //                                    text = ""
-                        //                            }
-                        //                        }
+                        ComboBox{
+                            id: comboBox
+                            Layout.preferredHeight: 32
+                            model: labelClassEditPage.labelPropertyModel
+                            onActivated: {
+                                label.text = labelClassEditPage.labelPropertyModel.get(currentIndex).labelName
+                                labelClass = labelClassEditPage.labelPropertyModel.get(currentIndex).labelName
+                            }
+                        }
                     }
                 }
             }

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.12
 
 Page {
+    property alias labelPropertyModel: labelPropertyModel
     ListView{
         id: listView
         anchors.verticalCenter: parent.verticalCenter
@@ -41,7 +42,10 @@ Page {
     ListModel{
         id: labelPropertyModel
         ListElement{
-            labelName: "Cat"
+            labelName: "dog"
+        }
+        ListElement{
+            labelName: "flower"
         }
     }
     Pane{
