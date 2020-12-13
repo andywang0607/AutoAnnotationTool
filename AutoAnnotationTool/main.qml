@@ -19,6 +19,7 @@ ApplicationWindow {
     title: qsTr("Auto Annotation Tool")
     Material.theme: Material.Dark
     Material.primary: Material.BlueGrey
+    Material.accent: Material.Amber
 
     header: ToolBar{
         id: toolBar
