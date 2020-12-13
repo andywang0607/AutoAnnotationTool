@@ -1,6 +1,7 @@
 QT += quick
 QT += widgets
 QT += concurrent
+QT += quickcontrols2
 
 CONFIG += c++14
 

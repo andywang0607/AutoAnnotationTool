@@ -2,6 +2,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
 
 #include <labelcollector.h>
 #include <labeldatamodel.h>
@@ -13,6 +14,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QApplication app(argc, argv);
+
+    QQuickStyle::setStyle("Material");
 
     qmlRegisterType<LabelCollector>("LabelCollector", 1, 0, "LabelCollector");
     qmlRegisterType<LabelDataModel>("LabelDataModel", 1, 0, "LabelDataModel");

@@ -6,20 +6,22 @@ Page {
     property int defaultIteration: 4
     property double defaultEpsilon: 1
     ColumnLayout{
-        anchors.fill: parent
-        anchors.margins: 20
-        Layout.fillWidth: true
+        anchors.centerIn: parent
+        Layout.preferredWidth: 600
+        Layout.preferredHeight: 400
         RowLayout{
             Label{
                 id: iterationLabel
                 Layout.preferredWidth: 100
                 text: qsTr("Iteration")
+                font.pixelSize: 20
             }
             Label{
                 id: iterationShow
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 60
                 text: CvParam.iteration
+                font.pixelSize: 20
             }
             Slider {
                 id: iterationSlider
@@ -38,12 +40,14 @@ Page {
                 id: epsilonLabel
                 Layout.preferredWidth: 100
                 text: qsTr("Epsilon")
+                font.pixelSize: 20
             }
             Label{
                 id: epsilonShow
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 60
                 text: CvParam.epsilon
+                font.pixelSize: 20
             }
             Slider {
                 id: epsilonLabelSlider
