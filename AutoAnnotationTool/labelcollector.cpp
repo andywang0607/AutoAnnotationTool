@@ -13,6 +13,7 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_highlightPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_pointPen(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_polyPen(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
+  , m_extensivePen(QPen(QColor("#556b2f"), 1, Qt::DashLine, Qt::SquareCap, Qt::MiterJoin)) // darkolivegreen
   , m_cvModule(std::make_unique<CvModule>())
 {
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -42,6 +43,10 @@ void LabelCollector::paint(QPainter *painter)
     }
     if (m_selectLabelIdx.empty()) {
         if (m_mouseMoved) {
+            // Draw a horizontal and vertical dash line to show cursor point
+            painter->setPen(m_extensivePen);
+            painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
+            painter->drawLine(0, m_lastPoint.y(), m_scaledImg.width(), m_lastPoint.y());
             painter->setPen(m_normalPen);
             painter->setRenderHint(QPainter::Antialiasing);
             painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
@@ -49,6 +54,31 @@ void LabelCollector::paint(QPainter *painter)
     }
     if (m_dataVec.empty())
         return;
+    // Draw a horizontal and vertical dash line to show cursor point while adjust rectangle
+    if(!m_polySelectResult.isSelect && m_rectCornerSelectResult.isSelect) {
+        painter->setPen(m_extensivePen);
+        painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
+        painter->drawLine(0, m_lastPoint.y(), m_scaledImg.width(), m_lastPoint.y());
+    } else if (!m_polySelectResult.isSelect && !m_rectCornerSelectResult.isSelect && m_rectEdgeSelectResult.isSelect) {
+        painter->setPen(m_extensivePen);
+        switch (m_rectEdgeSelectResult.line) {
+        case 0:
+            painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
+            break;
+        case 1:
+            painter->drawLine(0, m_lastPoint.y(), m_scaledImg.width(), m_lastPoint.y());
+            break;
+        case 2:
+            painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
+            break;
+        case 3:
+            painter->drawLine(0, m_lastPoint.y(), m_scaledImg.width(), m_lastPoint.y());
+            break;
+        default:
+            break;
+        }
+    }
+
     QVector<LabelData*>::iterator iter;
     for (iter=m_dataVec.begin();iter!=m_dataVec.end();iter++) {
         // Draw bounding box
@@ -183,14 +213,13 @@ void LabelCollector::mouseReleaseEvent(QMouseEvent *event)
     m_mousePressed = false;
     m_mouseMoved = false;
     GeometryModule::preventInvalidRect(m_dataVec, m_rectCornerSelectResult, m_rectEdgeSelectResult);
-    if (m_polySelectResult.isSelect) {
-        PolygonSelectResult defaultResult;
-        m_polySelectResult = defaultResult;
+    if (m_polySelectResult.isSelect || m_rectEdgeSelectResult.isSelect || m_rectCornerSelectResult.isSelect) {
+        m_polySelectResult.isSelect = false;
+        m_rectEdgeSelectResult.isSelect = false;
+        m_rectCornerSelectResult.isSelect = false;
         update();
         return;
     }
-    if (m_polySelectResult.isSelect || m_rectEdgeSelectResult.isSelect || m_rectCornerSelectResult.isSelect)
-        return;
     if (!m_selectLabelIdx.empty())
         return;
     if (m_firstPoint != m_lastPoint){
