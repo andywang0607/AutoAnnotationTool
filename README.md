@@ -32,14 +32,23 @@ and this project is inspired by https://github.com/wkentaro/labelme
 
 ## Feature
 - Rectangle annotation
-- Generate a polygon annotation with just one click on a rectangle ROI
-![Execute](result/flower.gif)
-![Execute](result/dog2.gif) 
-![Execute](result/dog.gif)  
- 
+  - Modify rectangle by simply drag the coner or edge of it is supported 
+- Polygon annotation
+  - Generate a polygon annotation with just one click on a rectangle ROI
+  - Modify the generated polygon by dragging it is supported
 - Edit Label  
-![Execute](result/LabelEdit.PNG)
 - Save and load rectangle and polygon annotation data according to the [labelme](https://github.com/wkentaro/labelme) json format
+
+
+![Execute](result/flower.gif "Flower")
+![Execute](result/dog.gif)  
+![Execute](result/dog2.gif) 
+![Execute](result/LabelEdit.PNG)
+## ShortCut
+- A: Last image
+- D: Next image
+- S: Save
+- Space: Open label list
 
 ## Description to setting parameter
 - Iteration: Number of iterations the algorithm should run.(default = 4)
