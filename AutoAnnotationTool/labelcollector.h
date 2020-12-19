@@ -111,6 +111,7 @@ private:
     QPen m_highlightPen;
     QPen m_pointPen;
     QPen m_polyPen;
+    QPen m_extensivePen;
     QVector<QPen> m_penVec;
 
     QVector<LabelData*> m_dataVec;
