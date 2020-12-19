@@ -1,0 +1,5 @@
+module materialdesign
+
+PaperRipple 1.0 PaperRipple.qml
+FlatButton 1.0 FlatButton.qml
+singleton UIConstants 1.0 UIConstants.qml
