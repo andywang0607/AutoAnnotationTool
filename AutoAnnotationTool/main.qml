@@ -30,6 +30,7 @@ ApplicationWindow {
                 visible: view.currentIndex!=0
                 onClicked: {
                     view.setCurrentIndex(0)
+                    focus = false
                 }
             }
             ToolButton{
@@ -38,6 +39,7 @@ ApplicationWindow {
                                              "qrc:/icon/round_menu_black_18dp.png"
                 onClicked: {
                     (drawer.position==1) ? drawer.close() : drawer.open()
+                    focus = false
                 }
             }
             ToolButton{
@@ -45,6 +47,7 @@ ApplicationWindow {
                 icon.source: "qrc:/icon/round_folder_open_black_18dp.png"
                 onClicked: {
                     folderDialog.open()
+                    focus = false
                 }
             }
             ToolButton{
@@ -52,6 +55,7 @@ ApplicationWindow {
                 icon.source: "qrc:/icon/round_photo_black_18dp.png"
                 onClicked: {
                     fileDialog.open()
+                    focus = false
                 }
             }
             ToolButton{
@@ -59,6 +63,7 @@ ApplicationWindow {
                 icon.source: "qrc:/icon/round_save_black_18dp.png"
                 onClicked: {
                     dataSaver.saveAnnotation(0)
+                    focus = false
                 }
             }
             Item { Layout.fillWidth: true }
@@ -66,6 +71,7 @@ ApplicationWindow {
                 icon.source: "qrc:/icon/round_list_black_18dp.png"
                 onClicked: {
                     (listViewDrawer.position==1) ? listViewDrawer.close() : listViewDrawer.open()
+                    focus = false
                 }
             }
         }
@@ -309,5 +315,33 @@ ApplicationWindow {
     AnnotationManager{
         id: dataSaver
         labelCollector: labelCollector
+    }
+
+    // Short cut
+    Item{
+        Action {
+            shortcut: "Space"
+            onTriggered: {
+                listViewDrawer.open()
+            }
+        }
+        Action {
+            shortcut: "D"
+            onTriggered: {
+                labelCollector.fileIdx++
+            }
+        }
+        Action {
+            shortcut: "A"
+            onTriggered: {
+                labelCollector.fileIdx--
+            }
+        }
+        Action {
+            shortcut: "S"
+            onTriggered: {
+                dataSaver.saveAnnotation(0)
+            }
+        }
     }
 }
