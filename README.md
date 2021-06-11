@@ -22,6 +22,30 @@ A label tool enable to do image annotation for rectangle and generate polygon an
 $ ./AppRun
 ```
 
+# How to build
+1. Prepare third-party library
+    - Setup vcpkg
+      ```
+      $ git clone https://github.com/microsoft/vcpkg
+      $ cd vcpkg
+      $ bootstrap-vcpkg.bat (windows)
+      $ bootstrap-vcpkg.bat (ubuntu)
+      ```
+    - Install required library
+      ```
+      $ vcpkg install opencv3[world]:x64-windows (windows)
+      $ ./vcpkg install opencv3[world]:x64-linux (ubuntu)
+      ```
+
+2. Build this project
+    - Open QtCreator
+    - Modify vcpkg path in cmakelist 
+      ```
+      set(VCPKG_ROOT $YOUR_VCPKG_PATH)
+      ```
+    - Open project with cmakelist
+    - Click build button
+
 ## Description
 AutoAnnotationTool is a graphical image annotation tool, 
 I start this project for saving my time spent on semantic segmentation label.
