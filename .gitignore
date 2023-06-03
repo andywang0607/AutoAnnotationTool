@@ -50,3 +50,10 @@ compile_commands.json
 
 # QtCreator local machine specific files for imported projects
 *creator.user*
+
+AutoAnnotationTool/Release
+AutoAnnotationTool/Debug
+AutoAnnotationTool/lib
+AutoAnnotationTool/bin
+AutoAnnotationTool/include
+AutoAnnotationTool/share

@@ -1,0 +1,3 @@
+[submodule "AutoAnnotationTool/thirdparty/opencv"]
+	path = AutoAnnotationTool/thirdparty/opencv
+	url = https://github.com/opencv/opencv.git
