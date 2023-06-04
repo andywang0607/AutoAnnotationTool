@@ -3,15 +3,15 @@ A label tool enable to do image annotation for rectangle and generate polygon an
  
 ## Environment
 ### Compiler: 
-|Win 10|Ubuntu 1804|
+|Win 10|Ubuntu 20.04|
 |:--:|:--:|
-|Visual studio 2017|GCC 7.5.0|  
+|Visual studio 2022|GCC 9.4|  
 
 ### Third Party: 
 |Package|Version|
 |:--:|:--:|
 |Qt| 5.14.2|  
-|OpenCV| 3.4.9|  
+|OpenCV| 3.4.15|  
 
 # How to use (for Ubuntu)
 - Download AutoAnnotationInstaller.run from release package
@@ -23,27 +23,15 @@ $ ./AppRun
 ```
 
 # How to build
-1. Prepare third-party library
-    - Setup vcpkg
-      ```
-      $ git clone https://github.com/microsoft/vcpkg
-      $ cd vcpkg
-      $ bootstrap-vcpkg.bat (windows)
-      $ bootstrap-vcpkg.bat (ubuntu)
-      ```
-    - Install required library
-      ```
-      $ vcpkg install opencv3[world]:x64-windows (windows)
-      $ ./vcpkg install opencv3[world]:x64-linux (ubuntu)
-      ```
+1. Clone this project with submodule
+    ```
+    git clone https://github.com/andywang0607/AutoAnnotationTool.git --recursive
+    or 
+    git clone git@github.com:andywang0607/AutoAnnotationTool.git --recursive
+    ```
 
 2. Build this project
     - Open QtCreator
-    - Modify vcpkg path in cmakelist 
-      ```
-      set(VCPKG_ROOT $YOUR_VCPKG_PATH)
-      ```
-    - Open project with cmakelist
     - Click build button
 
 ## Description
