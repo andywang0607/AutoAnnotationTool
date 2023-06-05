@@ -25,7 +25,6 @@ add_executable(AutoAnnotationTool
     QItem/CvParam.cpp
     CV/CvModule.cpp
     CV/GeometryModule.cpp
-    OpencvTypeConverter.cpp
     main.cpp
     qml.qrc
 )

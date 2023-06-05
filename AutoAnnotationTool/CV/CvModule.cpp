@@ -1,5 +1,5 @@
 #include "CvModule.h"
-#include "OpencvTypeConverter.h"
+#include "Type/TypeConverter.hpp"
 
 #include <QPolygon>
 #include <QDebug>
@@ -15,8 +15,7 @@ CvModule::CvModule()
 
 void CvModule::getCroppedImg(QRectF rect, qreal factor)
 {
-    cv::Rect rectOri = OpencvTypeConverter::qrect2CvRect(QRectF(rect.topLeft() * factor,
-                                                                rect.bottomRight() * factor));
+    cv::Rect rectOri = Type::toRect<cv::Rect>(rect);
     cv::Mat croppedImg = m_originImg(rectOri);
     cv::namedWindow("Cropped");
     cv::imshow("Cropped", croppedImg);
@@ -86,7 +85,7 @@ void CvModule::getOriginImg(QString imgSrc)
 
 cv::Rect CvModule::getRoiRect(QRectF rect, qreal factor)
 {
-    QRectF rectOri(rect.topLeft() * factor,
+    const QRectF rectOri(rect.topLeft() * factor,
                    rect.bottomRight() * factor);
-    return OpencvTypeConverter::qrect2CvRect(rectOri);
+    return Type::toRect<cv::Rect>(rectOri);
 }
