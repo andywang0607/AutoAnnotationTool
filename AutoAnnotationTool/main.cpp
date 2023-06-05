@@ -4,10 +4,10 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 
-#include <labelcollector.h>
-#include <labeldatamodel.h>
-#include <annotationmanager.h>
-#include <CV/cvparam.h>
+#include <QItem/LabelCollector.h>
+#include <QItem/LableDataModel.h>
+#include <QItem/AnnotationManager.h>
+#include <QItem/CvParam.h>
 
 int main(int argc, char *argv[])
 {

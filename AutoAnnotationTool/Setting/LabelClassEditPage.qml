@@ -3,7 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.12
 
-import "../materialdesign/"
+import "../MaterialDesign/"
 
 Page {
     property alias labelPropertyModel: labelPropertyModel
@@ -27,7 +27,7 @@ Page {
                     Layout.preferredWidth: 34
                     Image {
                         anchors.fill: parent
-                        source: "qrc:/icon/round_delete_black_18dp.png"
+                        source: "qrc:/Icon/round_delete_black_18dp.png"
                         asynchronous : true
                     }
                     onClicked: {
@@ -75,7 +75,7 @@ Page {
             Material.background: Material.LightGreen
             Image {
                 anchors.fill: parent
-                source: "qrc:/icon/round_add_circle_black_18dp.png"
+                source: "qrc:/Icon/round_add_circle_black_18dp.png"
                 fillMode: Image.PreserveAspectFit
             }
             onClicked: {

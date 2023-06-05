@@ -1,4 +1,4 @@
-#include "opencvtypeconverter.h"
+#include "OpencvTypeConverter.h"
 
 OpencvTypeConverter::OpencvTypeConverter()
 {

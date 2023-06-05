@@ -1,4 +1,4 @@
-#include "geometrymodule.h"
+#include "GeometryModule.h"
 
 GeometryModule::GeometryModule()
 {

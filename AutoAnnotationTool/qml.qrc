@@ -2,25 +2,25 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Setting/CVParamSettingPage.qml</file>
-        <file>icon/round_chevron_left_black_18dp.png</file>
-        <file>icon/round_chevron_right_black_18dp.png</file>
-        <file>icon/round_folder_open_black_18dp.png</file>
-        <file>icon/round_menu_black_18dp.png</file>
-        <file>icon/round_menu_open_black_18dp.png</file>
-        <file>icon/round_delete_black_18dp.png</file>
-        <file>icon/round_image_search_black_18dp.png</file>
-        <file>icon/round_list_black_18dp.png</file>
-        <file>icon/round_photo_black_18dp.png</file>
-        <file>icon/round_save_black_18dp.png</file>
-        <file>icon/round_save_black_48dp.png</file>
-        <file>icon/round_settings_black_18dp.png</file>
-        <file>materialdesign/FlatButton.qml</file>
-        <file>materialdesign/PaperRipple.qml</file>
-        <file>materialdesign/UIConstants.qml</file>
-        <file>icon/round_add_circle_black_18dp.png</file>
-        <file>icon/round_create_black_18dp.png</file>
-        <file>icon/round_arrow_back_black_18dp.png</file>
+        <file>Icon/round_chevron_left_black_18dp.png</file>
+        <file>Icon/round_chevron_right_black_18dp.png</file>
+        <file>Icon/round_folder_open_black_18dp.png</file>
+        <file>Icon/round_menu_black_18dp.png</file>
+        <file>Icon/round_menu_open_black_18dp.png</file>
+        <file>Icon/round_delete_black_18dp.png</file>
+        <file>Icon/round_image_search_black_18dp.png</file>
+        <file>Icon/round_list_black_18dp.png</file>
+        <file>Icon/round_photo_black_18dp.png</file>
+        <file>Icon/round_save_black_18dp.png</file>
+        <file>Icon/round_save_black_48dp.png</file>
+        <file>Icon/round_settings_black_18dp.png</file>
+        <file>MaterialDesign/FlatButton.qml</file>
+        <file>MaterialDesign/PaperRipple.qml</file>
+        <file>MaterialDesign/UIConstants.qml</file>
+        <file>Icon/round_add_circle_black_18dp.png</file>
+        <file>Icon/round_create_black_18dp.png</file>
+        <file>Icon/round_arrow_back_black_18dp.png</file>
         <file>Setting/LabelClassEditPage.qml</file>
-        <file>materialdesign/qmldir</file>
+        <file>MaterialDesign/qmldir</file>
     </qresource>
 </RCC>

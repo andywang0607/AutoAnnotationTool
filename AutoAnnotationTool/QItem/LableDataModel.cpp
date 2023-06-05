@@ -1,5 +1,5 @@
-#include "labeldatamodel.h"
-#include "labelcollector.h"
+#include "LableDataModel.h"
+#include "LabelCollector.h"
 
 LabelDataModel::LabelDataModel(QObject *parent)
     : QAbstractListModel(parent)

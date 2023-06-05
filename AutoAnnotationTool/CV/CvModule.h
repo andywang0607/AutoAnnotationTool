@@ -1,7 +1,8 @@
 #ifndef CVMODULE_H
 #define CVMODULE_H
-#include "labeldata.h"
-#include "CV/cvparam.h"
+
+#include "include/LableData.h"
+#include "QItem/CvParam.h"
 
 #include <QRectF>
 #include <QString>

@@ -1,5 +1,5 @@
-#include "labelcollector.h"
-#include "geometrymodule.h"
+#include "LabelCollector.h"
+#include "CV/GeometryModule.h"
 
 #include <QtGlobal>
 

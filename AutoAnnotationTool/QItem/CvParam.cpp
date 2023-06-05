@@ -1,4 +1,4 @@
-#include "cvparam.h"
+#include "CvParam.h"
 
 CvParam::CvParam(QObject *parent) : QObject(parent)
   , m_iteration(4)

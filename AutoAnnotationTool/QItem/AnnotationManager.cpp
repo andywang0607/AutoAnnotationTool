@@ -6,7 +6,7 @@
 #include <QJsonArray>
 #include <QBuffer>
 
-#include "annotationmanager.h"
+#include "AnnotationManager.h"
 
 AnnotationManager::AnnotationManager(QObject *parent) : QObject(parent)
 {

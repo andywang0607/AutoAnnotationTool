@@ -10,7 +10,7 @@ import LabelDataModel 1.0
 import AnnotationManager 1.0
 
 import "Setting"
-import "materialdesign/"
+import "MaterialDesign/"
 
 ApplicationWindow {
     visible: true
@@ -26,7 +26,7 @@ ApplicationWindow {
         RowLayout{
             anchors.fill: parent
             ToolButton{
-                icon.source: "qrc:/icon/round_arrow_back_black_18dp.png"
+                icon.source: "qrc:/Icon/round_arrow_back_black_18dp.png"
                 visible: view.currentIndex!=0
                 onClicked: {
                     view.setCurrentIndex(0)
@@ -35,8 +35,8 @@ ApplicationWindow {
             }
             ToolButton{
                 visible: view.currentIndex==0
-                icon.source: drawer.opened ? "qrc:/icon/round_menu_open_black_18dp.png" :
-                                             "qrc:/icon/round_menu_black_18dp.png"
+                icon.source: drawer.opened ? "qrc:/Icon/round_menu_open_black_18dp.png" :
+                                             "qrc:/Icon/round_menu_black_18dp.png"
                 onClicked: {
                     (drawer.position==1) ? drawer.close() : drawer.open()
                     focus = false
@@ -44,7 +44,7 @@ ApplicationWindow {
             }
             ToolButton{
                 visible: view.currentIndex==0
-                icon.source: "qrc:/icon/round_folder_open_black_18dp.png"
+                icon.source: "qrc:/Icon/round_folder_open_black_18dp.png"
                 onClicked: {
                     folderDialog.open()
                     focus = false
@@ -52,7 +52,7 @@ ApplicationWindow {
             }
             ToolButton{
                 visible: view.currentIndex==0
-                icon.source: "qrc:/icon/round_photo_black_18dp.png"
+                icon.source: "qrc:/Icon/round_photo_black_18dp.png"
                 onClicked: {
                     fileDialog.open()
                     focus = false
@@ -60,7 +60,7 @@ ApplicationWindow {
             }
             ToolButton{
                 visible: !(labelCollector.imgSrc == "") && view.currentIndex==0
-                icon.source: "qrc:/icon/round_save_black_18dp.png"
+                icon.source: "qrc:/Icon/round_save_black_18dp.png"
                 onClicked: {
                     dataSaver.saveAnnotation(0)
                     focus = false
@@ -68,7 +68,7 @@ ApplicationWindow {
             }
             Item { Layout.fillWidth: true }
             ToolButton{
-                icon.source: "qrc:/icon/round_list_black_18dp.png"
+                icon.source: "qrc:/Icon/round_list_black_18dp.png"
                 onClicked: {
                     (listViewDrawer.position==1) ? listViewDrawer.close() : listViewDrawer.open()
                     focus = false
@@ -80,7 +80,7 @@ ApplicationWindow {
     footer: RowLayout{
         visible: view.currentIndex == 0
         Button {
-            icon.source: "qrc:/icon/round_chevron_left_black_18dp.png"
+            icon.source: "qrc:/Icon/round_chevron_left_black_18dp.png"
             onClicked: {
                 labelCollector.fileIdx--
             }
@@ -89,7 +89,7 @@ ApplicationWindow {
             Layout.fillWidth: true
         }
         Button {
-            icon.source: "qrc:/icon/round_chevron_right_black_18dp.png"
+            icon.source: "qrc:/Icon/round_chevron_right_black_18dp.png"
             onClicked: {
                 labelCollector.fileIdx++
             }
@@ -155,7 +155,7 @@ ApplicationWindow {
                     Image {
                         Layout.preferredWidth: 34
                         Layout.preferredHeight: 34
-                        source: "qrc:/icon/round_settings_black_18dp.png"
+                        source: "qrc:/Icon/round_settings_black_18dp.png"
                         asynchronous : true
                     }
                     Item{
@@ -185,7 +185,7 @@ ApplicationWindow {
                     Image {
                         Layout.preferredWidth: 34
                         Layout.preferredHeight: 34
-                        source: "qrc:/icon/round_create_black_18dp.png"
+                        source: "qrc:/Icon/round_create_black_18dp.png"
                         asynchronous : true
                     }
                     Item{
@@ -272,7 +272,7 @@ ApplicationWindow {
                             Layout.preferredHeight: 32
                             Image {
                                 anchors.fill: parent
-                                source: "qrc:/icon/round_delete_black_18dp.png"
+                                source: "qrc:/Icon/round_delete_black_18dp.png"
                                 fillMode: Image.PreserveAspectFit
                             }
                             onClicked: {

@@ -1,5 +1,5 @@
-#include "cvmodule.h"
-#include "opencvtypeconverter.h"
+#include "CvModule.h"
+#include "OpencvTypeConverter.h"
 
 #include <QPolygon>
 #include <QDebug>

@@ -17,10 +17,10 @@
 #include <vector>
 #include <memory>
 
-#include "labeldata.h"
-#include "mouseselectresult.h"
-#include "CV/cvmodule.h"
-#include "CV/cvparam.h"
+#include "include/LableData.h"
+#include "include/MouseSelectResult.h"
+#include "CV/CvModule.h"
+#include "QItem/CvParam.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
