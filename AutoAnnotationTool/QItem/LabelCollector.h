@@ -19,7 +19,7 @@
 
 #include "include/LableData.h"
 #include "include/MouseSelectResult.h"
-#include "CV/CvModule.h"
+#include "CV/CvModule.hpp"
 #include "QItem/CvParam.h"
 
 class LabelCollector : public QQuickPaintedItem
@@ -122,7 +122,7 @@ private:
     RectCornerSelectResult m_rectCornerSelectResult;
     RectEdgeSelectResult m_rectEdgeSelectResult;
 
-    std::unique_ptr<CvModule> m_cvModule;
+    CvModule<Grabcut> m_cvModule;
     QFuture<void> m_future;
     QFutureWatcher<void> m_watcher;
 

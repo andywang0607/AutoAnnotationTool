@@ -23,8 +23,9 @@ add_executable(AutoAnnotationTool
     QItem/LabelCollector.cpp
     QItem/LableDataModel.cpp
     QItem/CvParam.cpp
-    CV/CvModule.cpp
     CV/GeometryModule.cpp
+    CV/CvModule.hpp
+    CV/SegmentationPolicy/Grabcut.hpp
     main.cpp
     qml.qrc
 )

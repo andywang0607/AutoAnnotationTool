@@ -14,7 +14,6 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_pointPen(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_polyPen(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
   , m_extensivePen(QPen(QColor("#556b2f"), 1, Qt::DashLine, Qt::SquareCap, Qt::MiterJoin)) // darkolivegreen
-  , m_cvModule(std::make_unique<CvModule>())
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     m_penVec.push_back(m_normalPen);
@@ -29,7 +28,9 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     menu.addAction(QStringLiteral("Get Polygon"),this, [&]() {
         setCursor(QCursor(Qt::BusyCursor));
-        m_future = QtConcurrent::run(m_cvModule.get(), &CvModule::getPoly, m_dataVec, m_selectLabelIdx.front(), getFactorScaled(), m_cvParam);
+        auto *labelData =  m_dataVec[m_selectLabelIdx.front()];
+        m_future = QtConcurrent::run([this, labelData]()
+                                     { m_cvModule.updatePolyToLabelData(labelData, getFactorScaled(), m_cvParam); });
         m_watcher.setFuture(m_future);
     });
 
@@ -350,7 +351,7 @@ void LabelCollector::setImgSrc(QString imgSrc)
         setImgSrc(m_fileInfoList.at(fileIdx()).absoluteFilePath());
     }
     emit imgSrcChanged(m_imgSrc);
-    m_cvModule->getOriginImg(m_imgSrc);
+    m_cvModule.getOriginImg(m_imgSrc);
 }
 
 void LabelCollector::setCursorIcon()
