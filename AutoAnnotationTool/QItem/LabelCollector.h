@@ -107,11 +107,14 @@ private:
     QPointF m_currentPoint;
     QPointF m_firstPoint;
 
-    QPen m_normalPen;
-    QPen m_highlightPen;
-    QPen m_pointPen;
-    QPen m_polyPen;
-    QPen m_extensivePen;
+    enum PenType
+    {
+        Normal,
+        Highlight,
+        Point,
+        Polygon,
+        Extensive
+    };
     QVector<QPen> m_penVec;
 
     QVector<LabelData*> m_dataVec;
