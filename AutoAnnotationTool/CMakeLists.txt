@@ -19,13 +19,13 @@ find_package(Qt5 COMPONENTS Core Quick Widgets Concurrent QuickControls2 REQUIRE
 add_subdirectory(thirdparty)
 
 add_executable(AutoAnnotationTool
-    CV/cvmodule.cpp
-    CV/cvparam.cpp
-    annotationmanager.cpp
-    geometrymodule.cpp
-    labelcollector.cpp
-    labeldatamodel.cpp
-    opencvtypeconverter.cpp
+    QItem/AnnotationManager.cpp
+    QItem/LabelCollector.cpp
+    QItem/LableDataModel.cpp
+    QItem/CvParam.cpp
+    CV/GeometryModule.cpp
+    CV/CvModule.hpp
+    CV/SegmentationPolicy/Grabcut.hpp
     main.cpp
     qml.qrc
 )
@@ -36,6 +36,7 @@ target_link_libraries(AutoAnnotationTool
     PRIVATE Qt5::Core Qt5::Quick Qt5::Widgets Qt5::Concurrent Qt5::QuickControls2)
 target_link_libraries(AutoAnnotationTool
     PUBLIC opencv_core opencv_imgproc opencv_highgui)
+
 target_include_directories(AutoAnnotationTool
     PRIVATE 
     ${OPENCV_MODULE_opencv_core_LOCATION}/include

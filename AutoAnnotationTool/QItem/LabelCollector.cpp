@@ -1,5 +1,5 @@
-#include "labelcollector.h"
-#include "geometrymodule.h"
+#include "LabelCollector.h"
+#include "CV/GeometryModule.h"
 
 #include <QtGlobal>
 
@@ -9,18 +9,16 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
   , m_mouseEnabled(true)
   , m_mousePressed(false)
   , m_mouseMoved(false)
-  , m_normalPen(QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_highlightPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_pointPen(QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_polyPen(QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin))
-  , m_extensivePen(QPen(QColor("#556b2f"), 1, Qt::DashLine, Qt::SquareCap, Qt::MiterJoin)) // darkolivegreen
-  , m_cvModule(std::make_unique<CvModule>())
 {
     setAcceptedMouseButtons(Qt::AllButtons);
-    m_penVec.push_back(m_normalPen);
-    m_penVec.push_back(m_highlightPen);
-    m_penVec.push_back(m_pointPen);
-    m_penVec.push_back(m_polyPen);
+
+    m_penVec = {
+        QPen(Qt::green, 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin),
+        QPen(Qt::red, 5, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin),
+        QPen(QColor(220,118,51), 7, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin),
+        QPen(Qt::yellow , 3, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin),
+        QPen(QColor("#556b2f"), 1, Qt::DashLine, Qt::SquareCap, Qt::MiterJoin)
+    };
 
     connect(&m_watcher, &QFutureWatcher<void>::finished, this, [&]() {
         this->update();
@@ -29,7 +27,9 @@ LabelCollector::LabelCollector(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     menu.addAction(QStringLiteral("Get Polygon"),this, [&]() {
         setCursor(QCursor(Qt::BusyCursor));
-        m_future = QtConcurrent::run(m_cvModule.get(), &CvModule::getPoly, m_dataVec, m_selectLabelIdx.front(), getFactorScaled(), m_cvParam);
+        auto *labelData =  m_dataVec[m_selectLabelIdx.front()];
+        m_future = QtConcurrent::run([this, labelData]()
+                                     { m_cvModule.updatePolyToLabelData(labelData, getFactorScaled(), m_cvParam); });
         m_watcher.setFuture(m_future);
     });
 
@@ -44,10 +44,10 @@ void LabelCollector::paint(QPainter *painter)
     if (m_selectLabelIdx.empty()) {
         if (m_mouseMoved) {
             // Draw a horizontal and vertical dash line to show cursor point
-            painter->setPen(m_extensivePen);
+            painter->setPen(m_penVec[PenType::Extensive]);
             painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
             painter->drawLine(0, m_lastPoint.y(), m_scaledImg.width(), m_lastPoint.y());
-            painter->setPen(m_normalPen);
+            painter->setPen(m_penVec[PenType::Normal]);
             painter->setRenderHint(QPainter::Antialiasing);
             painter->drawRect(QRectF(m_firstPoint,m_lastPoint));
         }
@@ -56,11 +56,11 @@ void LabelCollector::paint(QPainter *painter)
         return;
     // Draw a horizontal and vertical dash line to show cursor point while adjust rectangle
     if(!m_polySelectResult.isSelect && m_rectCornerSelectResult.isSelect) {
-        painter->setPen(m_extensivePen);
+        painter->setPen(m_penVec[PenType::Extensive]);
         painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
         painter->drawLine(0, m_lastPoint.y(), m_scaledImg.width(), m_lastPoint.y());
     } else if (!m_polySelectResult.isSelect && !m_rectCornerSelectResult.isSelect && m_rectEdgeSelectResult.isSelect) {
-        painter->setPen(m_extensivePen);
+        painter->setPen(m_penVec[PenType::Extensive]);
         switch (m_rectEdgeSelectResult.line) {
         case 0:
             painter->drawLine(m_lastPoint.x(), 0, m_lastPoint.x(), m_scaledImg.height());
@@ -86,11 +86,11 @@ void LabelCollector::paint(QPainter *painter)
         painter->setPen(m_penVec.at((*iter)->penIdx));
         painter->drawRect((*iter)->rect);
         // Draw result polygon
-        painter->setPen(m_penVec.at(3));
+        painter->setPen(m_penVec.at(PenType::Polygon));
         painter->drawPolygon((*iter)->poly);
 
         // Draw result point
-        painter->setPen(m_penVec.at(2));
+        painter->setPen(m_penVec.at(PenType::Point));
         QVector<QPointF>::iterator pointIter;
         int dataIdx = std::distance(m_dataVec.begin(),iter);
         for (pointIter=(*iter)->poly.begin();pointIter!=(*iter)->poly.end();pointIter++) {
@@ -104,7 +104,7 @@ void LabelCollector::paint(QPainter *painter)
                 painter->setBrush(QBrush(gradient));
                 painter->drawEllipse(*pointIter,5,5);
             } else {
-                painter->setPen(m_penVec.at(2));
+                painter->setPen(m_penVec.at(PenType::Point));
                 painter->setBrush(QBrush(Qt::NoBrush));
                 painter->drawPoint(*pointIter);
             }
@@ -350,7 +350,7 @@ void LabelCollector::setImgSrc(QString imgSrc)
         setImgSrc(m_fileInfoList.at(fileIdx()).absoluteFilePath());
     }
     emit imgSrcChanged(m_imgSrc);
-    m_cvModule->getOriginImg(m_imgSrc);
+    m_cvModule.getOriginImg(m_imgSrc);
 }
 
 void LabelCollector::setCursorIcon()

@@ -17,10 +17,10 @@
 #include <vector>
 #include <memory>
 
-#include "labeldata.h"
-#include "mouseselectresult.h"
-#include "CV/cvmodule.h"
-#include "CV/cvparam.h"
+#include "include/LableData.h"
+#include "include/MouseSelectResult.h"
+#include "CV/CvModule.hpp"
+#include "QItem/CvParam.h"
 
 class LabelCollector : public QQuickPaintedItem
 {
@@ -107,11 +107,14 @@ private:
     QPointF m_currentPoint;
     QPointF m_firstPoint;
 
-    QPen m_normalPen;
-    QPen m_highlightPen;
-    QPen m_pointPen;
-    QPen m_polyPen;
-    QPen m_extensivePen;
+    enum PenType
+    {
+        Normal,
+        Highlight,
+        Point,
+        Polygon,
+        Extensive
+    };
     QVector<QPen> m_penVec;
 
     QVector<LabelData*> m_dataVec;
@@ -122,7 +125,7 @@ private:
     RectCornerSelectResult m_rectCornerSelectResult;
     RectEdgeSelectResult m_rectEdgeSelectResult;
 
-    std::unique_ptr<CvModule> m_cvModule;
+    CvModule<Grabcut> m_cvModule;
     QFuture<void> m_future;
     QFutureWatcher<void> m_watcher;
 

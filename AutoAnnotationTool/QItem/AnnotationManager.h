@@ -2,7 +2,8 @@
 #define ANNOTATIONMANAGER_H
 
 #include <QObject>
-#include <labelcollector.h>
+#include <QItem/LabelCollector.h>
+
 class AnnotationManager : public QObject
 {
     Q_OBJECT

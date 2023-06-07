@@ -4,8 +4,8 @@
 #include <QPointF>
 #include <QRectF>
 
-#include "labeldata.h"
-#include "mouseselectresult.h"
+#include "include/LableData.h"
+#include "include/MouseSelectResult.h"
 
 class GeometryModule
 {

@@ -1,10 +1,8 @@
 #ifndef LABELDATA_H
 #define LABELDATA_H
+
 #include <QPolygon>
 #include <QPoint>
-
-//OpenCV related header
-#include <opencv2/core/core.hpp>
 
 struct LabelData{
 public:
