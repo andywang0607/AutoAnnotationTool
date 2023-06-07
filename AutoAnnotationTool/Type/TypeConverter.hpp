@@ -9,25 +9,27 @@
 namespace Type {
 
 template<typename RectType>
-static RectType toRect(const QRectF &rect)
+inline RectType toRect(const QRectF &rect)
 {
     static_assert(true, "Type::toRect: RectType not support");
+    return RectType();
 }
 
 template<>
-static cv::Rect toRect<cv::Rect>(const QRectF &rect)
+inline cv::Rect toRect<cv::Rect>(const QRectF &rect)
 {
     return cv::Rect(rect.topLeft().x(),rect.topLeft().y(),rect.width(),rect.height());
 }
 
 template<typename RectType>
-static QRectF fromRect(const RectType &rect)
+inline QRectF fromRect(const RectType &rect)
 {
     static_assert(true, "Type::fromRect: RectType not support");
+    return QRectF();
 }
 
 template<>
-static QRectF fromRect<cv::Rect>(const cv::Rect &rect)
+inline QRectF fromRect<cv::Rect>(const cv::Rect &rect)
 {
     QPoint tl(rect.tl().x, rect.tl().y);
     QPoint br(rect.br().x, rect.br().y);
@@ -35,25 +37,27 @@ static QRectF fromRect<cv::Rect>(const cv::Rect &rect)
 }
 
 template<typename PointType>
-static PointType toPoint(const QPoint &pt)
+inline PointType toPoint(const QPoint &pt)
 {
     static_assert(true, "Type::toPoint: PointType not support");
+    return PointType();
 }
 
 template<>
-static cv::Point toPoint<cv::Point>(const QPoint &pt)
+inline cv::Point toPoint<cv::Point>(const QPoint &pt)
 {
     return cv::Point(pt.x(), pt.y());
 }
 
 template<typename PointType>
-static QPoint fromPoint(const PointType &pt)
+inline QPoint fromPoint(const PointType &pt)
 {
     static_assert(true, "Type::fromPoint: PointType not support");
+    return QPoint();
 }
 
 template<>
-static QPoint fromPoint<cv::Point>(const cv::Point &pt)
+inline QPoint fromPoint<cv::Point>(const cv::Point &pt)
 {
     return QPoint(pt.x, pt.y);
 }

@@ -1,5 +1,7 @@
 #include "GeometryModule.h"
 
+#include <math.h>
+
 GeometryModule::GeometryModule()
 {
 
